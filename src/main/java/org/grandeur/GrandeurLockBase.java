@@ -59,7 +59,11 @@ public abstract class GrandeurLockBase implements AutoCloseable {
                     timer.scheduleAtFixedRate(new TimerTask() {
                         @Override
                         public void run() {
-                            DoLock();
+                            try {
+                                DoLock();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     }, GetDelayCheck(), GetIntervalCheck());
                     LogManager.GetLogger(Grandeur.class).Info(GetName() + " is running...");
