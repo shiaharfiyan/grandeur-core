@@ -14,9 +14,7 @@ public class Context implements AutoCloseable {
 
     private Context(int id, String value) {
         this.id = BuildId(id);
-        ;
         this.value = value;
-        this.logger = logger;
     }
 
     public Context(String value) {

@@ -144,6 +144,9 @@ public class LogPattern {
     }
 
     public void Process(LogRecord record, StringBuilder sb, StringBuilder sbPattern) {
+        if (tokens.size() == 0)
+            return;
+
         Token t = tokens.pop();
         if (t == Token.DATETIME) {
             if (sbPattern.toString().equals("")) {
