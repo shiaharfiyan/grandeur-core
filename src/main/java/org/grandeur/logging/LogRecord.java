@@ -1,7 +1,7 @@
-package io.github.shiaharfiyan.logging;
+package org.grandeur.logging;
 
-import io.github.shiaharfiyan.logging.interfaces.Logger;
-import io.github.shiaharfiyan.utils.helpers.ArrayHelper;
+import org.grandeur.logging.interfaces.Logger;
+import org.grandeur.utils.helpers.ArrayHelper;
 
 import java.util.ArrayList;
 import java.util.Date;

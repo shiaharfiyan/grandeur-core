@@ -1,4 +1,4 @@
-package io.github.shiaharfiyan.logging.interfaces;
+package org.grandeur.logging.interfaces;
 
 import java.io.IOException;
 import java.math.BigInteger;

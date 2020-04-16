@@ -1,15 +1,15 @@
-package io.github.shiaharfiyan.logging.appenders;
+package org.grandeur.logging.appenders;
 
-import io.github.shiaharfiyan.FileSystem;
-import io.github.shiaharfiyan.logging.Level;
-import io.github.shiaharfiyan.logging.LogPattern;
-import io.github.shiaharfiyan.logging.LogRecord;
-import io.github.shiaharfiyan.logging.abstraction.BaseLogAppender;
-import io.github.shiaharfiyan.logging.interfaces.LogKeeper;
-import io.github.shiaharfiyan.logging.interfaces.Logger;
-import io.github.shiaharfiyan.logging.keepers.FileLogKeeper;
-import io.github.shiaharfiyan.utils.Environment;
-import io.github.shiaharfiyan.utils.helpers.FileHelper;
+import org.grandeur.FileSystem;
+import org.grandeur.logging.Level;
+import org.grandeur.logging.LogPattern;
+import org.grandeur.logging.LogRecord;
+import org.grandeur.logging.abstraction.BaseLogAppender;
+import org.grandeur.logging.interfaces.LogKeeper;
+import org.grandeur.logging.interfaces.Logger;
+import org.grandeur.logging.keepers.FileLogKeeper;
+import org.grandeur.utils.Environment;
+import org.grandeur.utils.helpers.FileHelper;
 
 import java.io.BufferedWriter;
 import java.io.File;

@@ -1,7 +1,7 @@
-package io.github.shiaharfiyan.utils.threading;
+package org.grandeur.utils.threading;
 
-import io.github.shiaharfiyan.logging.interfaces.Logger;
-import io.github.shiaharfiyan.utils.helpers.ArrayHelper;
+import org.grandeur.logging.interfaces.Logger;
+import org.grandeur.utils.helpers.ArrayHelper;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;

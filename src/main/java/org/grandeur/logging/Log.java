@@ -1,10 +1,10 @@
-package io.github.shiaharfiyan.logging;
+package org.grandeur.logging;
 
-import io.github.shiaharfiyan.Grandeur;
-import io.github.shiaharfiyan.logging.appenders.FileLogAppender;
-import io.github.shiaharfiyan.logging.interfaces.LogAppender;
-import io.github.shiaharfiyan.logging.interfaces.Logger;
-import io.github.shiaharfiyan.utils.helpers.ArrayHelper;
+import org.grandeur.Grandeur;
+import org.grandeur.logging.appenders.FileLogAppender;
+import org.grandeur.logging.interfaces.LogAppender;
+import org.grandeur.logging.interfaces.Logger;
+import org.grandeur.utils.helpers.ArrayHelper;
 
 import java.util.HashMap;
 import java.util.UUID;

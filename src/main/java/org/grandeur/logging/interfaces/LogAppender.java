@@ -1,8 +1,8 @@
-package io.github.shiaharfiyan.logging.interfaces;
+package org.grandeur.logging.interfaces;
 
-import io.github.shiaharfiyan.logging.Level;
-import io.github.shiaharfiyan.logging.LogPattern;
-import io.github.shiaharfiyan.logging.LogRecord;
+import org.grandeur.logging.Level;
+import org.grandeur.logging.LogPattern;
+import org.grandeur.logging.LogRecord;
 
 public interface LogAppender {
     LogPattern GetLogPattern();

@@ -1,4 +1,4 @@
-package io.github.shiaharfiyan.utils.helpers;
+package org.grandeur.utils.helpers;
 
 public final class ObjectHelper {
     public static <T> Result<T> TryCast(Object s) {

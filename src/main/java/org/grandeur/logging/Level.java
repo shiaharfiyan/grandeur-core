@@ -1,6 +1,6 @@
-package io.github.shiaharfiyan.logging;
+package org.grandeur.logging;
 
-import io.github.shiaharfiyan.utils.helpers.ObjectHelper;
+import org.grandeur.utils.helpers.ObjectHelper;
 
 public enum Level {
     OFF(0),

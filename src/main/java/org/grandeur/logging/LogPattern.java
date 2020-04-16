@@ -1,4 +1,4 @@
-package io.github.shiaharfiyan.logging;
+package org.grandeur.logging;
 
 import java.text.SimpleDateFormat;
 import java.util.HashMap;

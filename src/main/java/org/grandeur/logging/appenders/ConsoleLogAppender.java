@@ -1,10 +1,10 @@
-package io.github.shiaharfiyan.logging.appenders;
+package org.grandeur.logging.appenders;
 
-import io.github.shiaharfiyan.logging.Level;
-import io.github.shiaharfiyan.logging.LogPattern;
-import io.github.shiaharfiyan.logging.LogRecord;
-import io.github.shiaharfiyan.logging.abstraction.BaseLogAppender;
-import io.github.shiaharfiyan.logging.interfaces.Logger;
+import org.grandeur.logging.Level;
+import org.grandeur.logging.LogPattern;
+import org.grandeur.logging.LogRecord;
+import org.grandeur.logging.abstraction.BaseLogAppender;
+import org.grandeur.logging.interfaces.Logger;
 
 import java.util.Date;
 

@@ -1,10 +1,10 @@
-package io.github.shiaharfiyan.logging.keepers;
+package org.grandeur.logging.keepers;
 
-import io.github.shiaharfiyan.logging.Level;
-import io.github.shiaharfiyan.logging.appenders.FileLogAppender;
-import io.github.shiaharfiyan.logging.interfaces.LogKeeper;
-import io.github.shiaharfiyan.utils.Environment;
-import io.github.shiaharfiyan.utils.helpers.FileHelper;
+import org.grandeur.logging.Level;
+import org.grandeur.logging.appenders.FileLogAppender;
+import org.grandeur.logging.interfaces.LogKeeper;
+import org.grandeur.utils.Environment;
+import org.grandeur.utils.helpers.FileHelper;
 
 import java.io.File;
 import java.math.BigInteger;

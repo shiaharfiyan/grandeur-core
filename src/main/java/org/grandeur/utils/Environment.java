@@ -1,9 +1,9 @@
-package io.github.shiaharfiyan.utils;
+package org.grandeur.utils;
 
-import io.github.shiaharfiyan.Grandeur;
-import io.github.shiaharfiyan.configuration.Ini;
-import io.github.shiaharfiyan.logging.LogManager;
-import io.github.shiaharfiyan.utils.helpers.DateTimeHelper;
+import org.grandeur.Grandeur;
+import org.grandeur.configuration.Ini;
+import org.grandeur.logging.LogManager;
+import org.grandeur.utils.helpers.DateTimeHelper;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,10 +1,10 @@
-package io.github.shiaharfiyan.configuration;
+package org.grandeur.configuration;
 
-import io.github.shiaharfiyan.FileSystemBase;
-import io.github.shiaharfiyan.logging.DC;
-import io.github.shiaharfiyan.logging.LogManager;
-import io.github.shiaharfiyan.logging.interfaces.Logger;
-import io.github.shiaharfiyan.utils.Environment;
+import org.grandeur.FileSystemBase;
+import org.grandeur.logging.DC;
+import org.grandeur.logging.LogManager;
+import org.grandeur.logging.interfaces.Logger;
+import org.grandeur.utils.Environment;
 
 import java.io.*;
 import java.math.BigInteger;

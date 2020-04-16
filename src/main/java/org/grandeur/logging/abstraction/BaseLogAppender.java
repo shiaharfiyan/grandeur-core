@@ -1,8 +1,8 @@
-package io.github.shiaharfiyan.logging.abstraction;
+package org.grandeur.logging.abstraction;
 
-import io.github.shiaharfiyan.logging.Level;
-import io.github.shiaharfiyan.logging.interfaces.LogAppender;
-import io.github.shiaharfiyan.logging.interfaces.Logger;
+import org.grandeur.logging.Level;
+import org.grandeur.logging.interfaces.LogAppender;
+import org.grandeur.logging.interfaces.Logger;
 
 public abstract class BaseLogAppender implements LogAppender {
     protected Level level = Level.INFO;

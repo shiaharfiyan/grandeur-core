@@ -1,13 +1,33 @@
-package io.github.shiaharfiyan;
+package org.grandeur;
 
-import io.github.shiaharfiyan.logging.DC;
-import io.github.shiaharfiyan.logging.LogConfiguration;
-import io.github.shiaharfiyan.logging.LogManager;
-import io.github.shiaharfiyan.logging.interfaces.Logger;
-import io.github.shiaharfiyan.utils.Environment;
+import org.grandeur.logging.DC;
+import org.grandeur.logging.LogConfiguration;
+import org.grandeur.logging.LogManager;
+import org.grandeur.logging.interfaces.Logger;
+import org.grandeur.utils.Environment;
 
 import java.util.HashMap;
-
+/**
+ *     Grandeur - a tool for logging, create config file based on ini and
+ *     utils
+ *
+ *     Copyright (C) 2020-Present Harfiyan Shia.
+ *
+ *     This file is part of Grandeur.
+ *
+ *     Grandeur is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     Grandeur is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with Grandeur. If not, see <http://www.gnu.org/licenses/>.
+ */
 public enum Grandeur {
     Instance;
 

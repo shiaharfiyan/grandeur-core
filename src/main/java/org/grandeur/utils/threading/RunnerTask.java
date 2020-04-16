@@ -1,6 +1,6 @@
-package io.github.shiaharfiyan.utils.threading;
+package org.grandeur.utils.threading;
 
-import io.github.shiaharfiyan.logging.interfaces.Logger;
+import org.grandeur.logging.interfaces.Logger;
 
 public abstract class RunnerTask implements Runnable {
     private Thread thread;

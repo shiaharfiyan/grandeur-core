@@ -5,6 +5,17 @@
     <artifactId>grandeur-core</artifactId>
     <version>0.0.2-SNAPSHOT</version>
     <packaging>jar</packaging>
+    <name>GLogTrace</name>
+    <url>https://github.com/shiaharfiyan/grandeur-core</url>
+    <description>
+        Logging library with simple nested diagnostic context and mapped diagnostic context to allow easier tracing with customizable config for log appender.
+    </description>
+    <licenses>
+        <license>
+            <name>GNU General Public License (GPL)</name>
+            <url>http://www.gnu.org/licenses/gpl.txt</url>
+        </license>
+    </licenses>
     <profiles>
         <profile>
             <id>release-sign-artifacts</id>

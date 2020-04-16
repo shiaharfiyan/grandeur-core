@@ -1,8 +1,8 @@
-package io.github.shiaharfiyan;
+package org.grandeur;
 
-import io.github.shiaharfiyan.logging.LogManager;
-import io.github.shiaharfiyan.logging.interfaces.Logger;
-import io.github.shiaharfiyan.utils.Environment;
+import org.grandeur.logging.LogManager;
+import org.grandeur.logging.interfaces.Logger;
+import org.grandeur.utils.Environment;
 
 import java.io.File;
 import java.io.RandomAccessFile;

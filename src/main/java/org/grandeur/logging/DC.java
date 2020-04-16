@@ -1,4 +1,4 @@
-package io.github.shiaharfiyan.logging;
+package org.grandeur.logging;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

@@ -1,4 +1,4 @@
-package io.github.shiaharfiyan;
+package org.grandeur;
 
 public interface FileSystem {
     String GetPath();
