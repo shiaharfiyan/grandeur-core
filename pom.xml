@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.shiaharfiyan</groupId>
     <artifactId>grandeur-core</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.${revision}-SNAPSHOT</version>
     <packaging>jar</packaging>
     <profiles>
         <profile>
@@ -26,12 +26,10 @@
         <snapshotRepository>
             <id>ossrh</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-            <name>io.github.shiaharfiyan</name>
         </snapshotRepository>
         <repository>
             <id>ossrh</id>
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-            <name>io.github.shiaharfiyan</name>
         </repository>
     </distributionManagement>
     <dependencies><!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
