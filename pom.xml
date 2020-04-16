@@ -10,6 +10,17 @@
     <description>
         Logging library with simple nested diagnostic context and mapped diagnostic context to allow easier tracing with customizable config for log appender.
     </description>
+    <developers>
+        <developer>
+            <name>Harfiyan Shia</name>
+            <email>hshia.dev@gmail.com</email>
+            <roles>
+                <role>
+                    Solution Consultant
+                </role>
+            </roles>
+        </developer>
+    </developers>
     <licenses>
         <license>
             <name>GNU General Public License (GPL)</name>
