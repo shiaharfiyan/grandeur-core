@@ -60,7 +60,6 @@ public class Sample {
   "globalPattern": "%d{yyyy/MM/dd HH:mm:ss,SSS} [%t] [%c] %n %l : %v",
 }
 ```
-```
 #### Output
 ```text
 2020/04/17 14:16:05,550 [main] [entry] Sample INFO : Hello, its grandeur log trace
