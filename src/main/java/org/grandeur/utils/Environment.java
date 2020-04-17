@@ -9,7 +9,26 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
-
+/**
+ *     Grandeur - a tool for logging, create config file based on ini and
+ *     utils
+ *     Copyright (C) 2020 Harfiyan Shia.
+ *
+ *     This file is part of grandeur-core.
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/.
+ */
 public final class Environment {
     private static final String OS = System.getProperty("os.name").toLowerCase();
     private static final String userLocation = System.getProperty("user.dir");
@@ -49,11 +68,10 @@ public final class Environment {
         variables.put("{{sysdate}}", DateTimeHelper.GetCompleteDateFormat(new Date()));
     }
 
-    /**
-     * Export a resource embedded into a Jar file to the local file path.
-     *
-     * @param resourceName ie.: "/SmartLibrary.dll"
-     * @return The path to the exported resource
+    /***
+     * @param resourceName
+     * @param fromClass
+     * @return
      * @throws Exception
      */
     static public String ExportResource(String resourceName, Class<?> fromClass) throws Exception {

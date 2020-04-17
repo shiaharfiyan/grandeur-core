@@ -12,22 +12,25 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 /**
- * ==============================================================
- * ======================= DISCLAIMER!!! ========================
- * == DO NOT EDIT IF YOU DO NOT UNDERSTAND THE CODE ROUTINE!!! ==
- * ==============================================================
- * <p>
- * Created By: Harfiyan Shia
- * Created Date: 23 February 2018
- * <p>
- * Last modified By: Harfiyan Shia
- * Last modified Date: 23 February 2018
- * <p>
- * Change Logs
- * Version 1.0.0 (Release Date: 23 February 2018) (First Release)
- * - Section and Key inside configuration file are now case sensitive
+ *     Grandeur - a tool for logging, create config file based on ini and
+ *     utils
+ *     Copyright (C) 2020 Harfiyan Shia.
+ *
+ *     This file is part of grandeur-core.
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/.
  */
-
 @SuppressWarnings("Duplicates")
 public class Ini extends FileSystemBase {
     private HashMap<String, IniItem> configurationItems = new HashMap<>();
