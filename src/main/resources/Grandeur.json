@@ -1,5 +1,5 @@
 {
-  "globalPattern": "%d{yyyy/MM/dd HH:mm:ss,SSS} [%t] [%c] %n %l : %v",
+  "globalPattern": "%d{yyyy/MM/dd HH:mm:ss,SSS} [%t] %n %l : %v",
   "loggerList": [
     {
       "bindTo": "*",

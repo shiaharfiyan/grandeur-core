@@ -54,6 +54,13 @@ public class Sample {
     }
 }
 ```
+#### _Pattern Nested Diagnostic Context_
+```json
+{
+  "globalPattern": "%d{yyyy/MM/dd HH:mm:ss,SSS} [%t] [%c] %n %l : %v",
+}
+```
+```
 #### Output
 ```text
 2020/04/17 14:16:05,550 [main] [entry] Sample INFO : Hello, its grandeur log trace
@@ -100,7 +107,7 @@ By default, this config file will be created during runtime if there's no any .j
 ### Json Config file Default
 ```json
 {
-  "globalPattern": "%d{yyyy/MM/dd HH:mm:ss,SSS} [%t] [%c] %n %z %l : %v",
+  "globalPattern": "%d{yyyy/MM/dd HH:mm:ss,SSS} [%t] %n %l : %v",
   "loggerList": [
     {
       "bindTo": "*",
