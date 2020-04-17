@@ -1,6 +1,6 @@
-# Welcome to Gandeur LogTrace (grandeur-core)
+# Welcome to Gandeur LogTrace
 
-This is a simple logging library with nested diagnostic context and mapped diagnostic context to allow easier tracing with customizable config for log appender.
+Gandeur LogTrace is a simple logging library with nested diagnostic context and mapped diagnostic context to allow easier tracing with customizable config for log appender.
 
 
 # Config file
@@ -74,3 +74,19 @@ By default, this config file will be created during runtime if there's no any .j
 | %v | Log Message | Content to log |
 | %x{key} | Mapped Context | Specify "key" to get value of mapped   context |
 | %X | Mapped Context | Display all Mapped Key   within current Context |
+
+### Maven dependency
+Add the following to your pom.xml
+```xml
+<!-- https://mvnrepository.com/artifact/io.github.shiaharfiyan/grandeur-core -->
+<dependency>
+    <groupId>io.github.shiaharfiyan</groupId>
+    <artifactId>grandeur-core</artifactId>
+    <version>0.0.3</version>
+</dependency>
+```
+### Third-Party Library
+Grandeur LogTrace use Gson 2.8.5 (https://mvnrepository.com/artifact/com.google.code.gson/gson/2.8.5) to load config file. Many thanks to Google!
+
+### Contribution
+I will be glad if there is someone wants to contribute and optimize Grandeur LogTrace, make it more efficient and effective. Please contact me hshia.dev@gmail.com
