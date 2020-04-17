@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.shiaharfiyan</groupId>
     <artifactId>grandeur-core</artifactId>
-    <version>0.0.5-SNAPSHOT</version>
+    <version>0.0.5</version>
     <packaging>jar</packaging>
     <name>Grandeur LogTrace</name>
     <url>https://github.com/shiaharfiyan/grandeur-core</url>
@@ -42,7 +42,7 @@
         <connection>scm:git:git://github.com/shiaharfiyan/grandeur-core.git</connection>
         <developerConnection>scm:git:git@github.com/shiaharfiyan/grandeur-core.git</developerConnection>
         <url>https://github.com/shiaharfiyan/grandeur-core</url>
-        <tag>grandeur-core-0.0.1</tag>
+        <tag>grandeur-core-0.0.5</tag>
     </scm>
     <distributionManagement>
         <snapshotRepository>
