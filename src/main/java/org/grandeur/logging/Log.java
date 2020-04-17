@@ -6,8 +6,32 @@ import org.grandeur.logging.interfaces.LogAppender;
 import org.grandeur.logging.interfaces.Logger;
 import org.grandeur.utils.helpers.ArrayHelper;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
+
+/**
+ *     Grandeur - a tool for logging, create config file based on ini and
+ *     utils
+ *
+ *     Copyright (C) 2020-Present Harfiyan Shia.
+ *
+ *     This file is part of Grandeur.
+ *
+ *     Grandeur is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     Grandeur is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with Grandeur. If not, see http://www.gnu.org/licenses/.
+ */
 
 public class Log implements Logger {
     private HashMap<String, LogAppender> logAppenderList;
@@ -184,16 +208,30 @@ public class Log implements Logger {
     }
 
     @Override
-    public boolean UpdateAppender(LogAppender appender) {
-        AppenderData appenderData = null;
+    public void UpdateAppender(LogAppender appender, long timeMilli) {
+        AppenderData appenderData;
+        appender.SetLastModified(timeMilli);
         if ((appenderData = GetAppender(appender)) != null) {
             logAppenderList.remove(appenderData.GetKey());
             logAppenderList.put(appenderData.GetKey(), appender);
         } else {
             AddAppender(appender);
         }
+    }
 
-        return true;
+    @Override
+    public void RemoveAppender(long timeMillis) {
+        List<String> keyForDeletion = new ArrayList<>();
+        for (String key : this.logAppenderList.keySet()) {
+            LogAppender appender = logAppenderList.get(key);
+            if (appender.GetLastModified() < timeMillis) {
+                keyForDeletion.add(key);
+            }
+        }
+
+        for (String key : keyForDeletion) {
+            logAppenderList.remove(key);
+        }
     }
 
     @Override

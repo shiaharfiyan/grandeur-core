@@ -11,10 +11,10 @@ import org.grandeur.utils.Environment;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
+import java.time.Instant;
 
 public enum LogConfiguration implements FileSystem {
     Instance;
@@ -40,17 +40,15 @@ public enum LogConfiguration implements FileSystem {
         return this.lastModified;
     }
 
-    public boolean Load(Logger logger) {
-
-        File file = new File(GetFullPath());
-        if (!file.exists() || file.isDirectory()) {
-            System.out.println("Cannot find " + GetFullPath() + " file!");
-            return false;
-        }
-
+    public void Load(Logger logger) {
         try {
-            Gson gson = new Gson();
+            File file = new File(GetFullPath());
+            if (!file.exists() || file.isDirectory()) {
+                Environment.ExportResource("/Grandeur.json", this.getClass());
+                return;
+            }
 
+            Gson gson = new Gson();
             JsonElement je = new JsonParser().parse(gson.newJsonReader(new FileReader(GetFullPath())));
             JsonArray loggerList = je.getAsJsonObject().get("loggerList").getAsJsonArray();
             String globalPattern = null;
@@ -58,6 +56,7 @@ public enum LogConfiguration implements FileSystem {
                 globalPattern = je.getAsJsonObject().get("globalPattern").getAsString();
             }
             boolean bindToAll = false;
+            long timeMilli = Instant.now().toEpochMilli();
             for (int i = 0; i < loggerList.size(); i++) {
                 String jsonBindTo = loggerList.get(i).getAsJsonObject().get("bindTo").getAsString();
 
@@ -66,22 +65,20 @@ public enum LogConfiguration implements FileSystem {
                 }
 
                 JsonArray appenderList = loggerList.get(i).getAsJsonObject().getAsJsonArray("appenderList");
-                LoadAppenderList(logger, appenderList, globalPattern, bindToAll, jsonBindTo);
+                LoadAppenderList(logger, appenderList, timeMilli, globalPattern, bindToAll, jsonBindTo);
             }
 
             if (loggerList.size() == 0)
                 logger.AddAppender(new ConsoleLogAppender(logger));
 
-        } catch (IOException | ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return;
         }
-
-        System.out.println("Log Configuration has been loaded for " + logger.GetName());
-        return true;
     }
 
     private void LoadAppenderList(Logger loggerToBind, JsonArray appenderList,
+                                  long timeMilli,
                                   String globalPattern,
                                   boolean bindToAll,
                                   String jsonBindTo) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
@@ -111,6 +108,7 @@ public enum LogConfiguration implements FileSystem {
             if (jsonAppenderPattern == null) {
                 jsonAppenderPattern = LogPattern.Default().GetPattern();
             }
+
             appenderObject.SetLogPattern(new LogPattern(jsonAppenderPattern));
 
             if (appenderObject instanceof FileLogAppender) {
@@ -142,8 +140,10 @@ public enum LogConfiguration implements FileSystem {
                 fileLogAppender.GetKeeper().SetAutoCreateArchivedDirectory(jsonAutoCreate);
             }
 
-            loggerToBind.UpdateAppender(appenderObject);
+            loggerToBind.UpdateAppender(appenderObject, timeMilli);
         }
+
+        loggerToBind.RemoveAppender(timeMilli);
     }
 
     @Override

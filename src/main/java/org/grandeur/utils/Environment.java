@@ -5,9 +5,7 @@ import org.grandeur.configuration.Ini;
 import org.grandeur.logging.LogManager;
 import org.grandeur.utils.helpers.DateTimeHelper;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
@@ -50,6 +48,41 @@ public final class Environment {
         variables.put("{{programfiles64}}", System.getenv("ProgramFiles"));
         variables.put("{{sysdate}}", DateTimeHelper.GetCompleteDateFormat(new Date()));
     }
+
+    /**
+     * Export a resource embedded into a Jar file to the local file path.
+     *
+     * @param resourceName ie.: "/SmartLibrary.dll"
+     * @return The path to the exported resource
+     * @throws Exception
+     */
+    static public String ExportResource(String resourceName, Class<?> fromClass) throws Exception {
+        InputStream stream = null;
+        OutputStream resStreamOut = null;
+        String jarFolder;
+        try {
+            stream = fromClass.getResourceAsStream(resourceName);//note that each / is a directory down in the "jar tree" been the jar the root of the tree
+            if(stream == null) {
+                throw new Exception("Cannot get resource \"" + resourceName + "\" from Jar file.");
+            }
+
+            int readBytes;
+            byte[] buffer = new byte[4096];
+            jarFolder = GetGrandeurLocation();
+            resStreamOut = new FileOutputStream(jarFolder + resourceName);
+            while ((readBytes = stream.read(buffer)) > 0) {
+                resStreamOut.write(buffer, 0, readBytes);
+            }
+        } catch (Exception ex) {
+            throw ex;
+        } finally {
+            if (stream != null) stream.close();
+            if (resStreamOut != null) resStreamOut.close();
+        }
+
+        return jarFolder + resourceName;
+    }
+
 
     public static String Replace(String input) {
         final String[] temp = {input};

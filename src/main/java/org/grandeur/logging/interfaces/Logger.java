@@ -37,5 +37,7 @@ public interface Logger {
 
     boolean HasAppender(LogAppender appender);
 
-    boolean UpdateAppender(LogAppender appender);
+    void UpdateAppender(LogAppender appender, long timeMilli);
+
+    void RemoveAppender(long timeMillis);
 }

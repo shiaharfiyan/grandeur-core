@@ -8,7 +8,19 @@ public abstract class BaseLogAppender implements LogAppender {
     protected Level level = Level.INFO;
     protected Logger logger;
 
+    protected long lastModified;
+
     public BaseLogAppender(Logger logger) {
         this.logger = logger;
+    }
+
+    @Override
+    public void SetLastModified(long lastModified) {
+        this.lastModified = lastModified;
+    }
+
+    @Override
+    public long GetLastModified() {
+        return lastModified;
     }
 }

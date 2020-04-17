@@ -20,4 +20,8 @@ public interface LogAppender {
     void Append(Level level, byte[] message);
 
     void Flush();
+
+    void SetLastModified(long lastModified);
+
+    long GetLastModified();
 }

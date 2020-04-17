@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.shiaharfiyan</groupId>
     <artifactId>grandeur-core</artifactId>
-    <version>0.0.4-SNAPSHOT</version>
+    <version>0.0.${revision}-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Grandeur LogTrace</name>
     <url>https://github.com/shiaharfiyan/grandeur-core</url>
