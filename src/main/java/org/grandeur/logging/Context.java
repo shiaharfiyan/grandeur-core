@@ -1,8 +1,13 @@
 package org.grandeur.logging;
 
 import org.grandeur.logging.interfaces.Logger;
+import org.grandeur.utils.helpers.DateTimeHelper;
 import org.grandeur.utils.helpers.StringHelper;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.util.Locale;
 import java.util.UUID;
 
 public class Context implements AutoCloseable {
@@ -12,9 +17,13 @@ public class Context implements AutoCloseable {
     private String value;
     private Logger logger;
 
+    private String startTime;
+    private String endTime;
+
     private Context(int id, String value) {
         this.id = BuildId(id);
         this.value = value;
+        this.startTime = DateTimeHelper.GetCompleteDateFormat(Instant.now());
     }
 
     public Context(String value) {
@@ -45,9 +54,18 @@ public class Context implements AutoCloseable {
         return value;
     }
 
+    public String GetStartTime() {
+        return startTime;
+    }
+
     @Override
     public void close() {
         try {
+            endTime = DateTimeHelper.GetCompleteDateFormat(Instant.now());
+            Instant startInstant = DateTimeHelper.ToInstant(startTime, DateTimeHelper.DefaultFormat, Locale.getDefault(), ZoneId.systemDefault());
+            Instant endInstant = DateTimeHelper.ToInstant(endTime, DateTimeHelper.DefaultFormat, Locale.getDefault(), ZoneId.systemDefault());
+            Duration duration = Duration.between(startInstant, endInstant);
+            GetLogger().Debug("Context removed with total duration = " + duration.getSeconds() + "." + duration.getNano() + "s");
             DC.Pop();
         } catch (Exception e) {
             e.printStackTrace();

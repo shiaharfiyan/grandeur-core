@@ -1,11 +1,17 @@
 package org.grandeur.logging;
 
+import org.grandeur.utils.helpers.DateTimeHelper;
+
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Stack;
 
 public class LogPattern {
+    private static final String DefaultDateTimePattern = "yyyy-MM-dd HH:mm:ss";
+    private static final String DefaultPattern = "[%d{yyyy/MM/dd HH:mm:ss,SSS}] [%t] %c %n %l : %v";
     private static HashMap<String, SimpleDateFormat> dateFormatters = new HashMap<>();
     private Stack<Token> tokens = new Stack<>();
     private String pattern;
@@ -15,7 +21,7 @@ public class LogPattern {
     }
 
     public static LogPattern Default() {
-        return new LogPattern("[%d{yyyy/MM/dd HH:mm:ss,SSS}] [%t] %c %n %l : %v");
+        return new LogPattern(DefaultPattern);
     }
 
     public String GetPattern() {
@@ -98,6 +104,13 @@ public class LogPattern {
                     if (inVarStart && inVarPattern) {
                         sbPattern.append(c);
                     } else if (inVarStart) {
+                        tokens.push(Token.SIMPLENAME);
+                    }
+                    break;
+                case 'N':
+                    if (inVarStart && inVarPattern) {
+                        sbPattern.append(c);
+                    } else if (inVarStart) {
                         tokens.push(Token.NAME);
                     }
                     break;
@@ -150,7 +163,7 @@ public class LogPattern {
         Token t = tokens.pop();
         if (t == Token.DATETIME) {
             if (sbPattern.toString().equals("")) {
-                sbPattern.append("yyyy-MM-dd HH:mm:ss");
+                sbPattern.append(DefaultDateTimePattern);
             }
             if (!dateFormatters.containsKey(sbPattern.toString()))
                 dateFormatters.put(sbPattern.toString(), new SimpleDateFormat(sbPattern.toString()));
@@ -205,9 +218,17 @@ public class LogPattern {
         } else if (t == Token.VALUE) {
             sb.append(record.GetValue());
         } else if (t == Token.DURATION) {
-            sb.append("null");
+            Context context;
+            if ((context = DC.Peek()) != null) {
+                Instant startTime = DateTimeHelper.ToInstant(context.GetStartTime(), null, null, null);
+                Duration duration = Duration.between(startTime, Instant.now());
+                sb.append(duration.getSeconds()).append(".").append(duration.getNano()).append("s");
+            }
         } else if (t == Token.NAME) {
             sb.append(record.GetLogger().GetName());
+        } else if (t == Token.SIMPLENAME) {
+            String completeName = record.GetLogger().GetName();
+            sb.append(completeName.substring(completeName.lastIndexOf(".")+1));
         } else if (t == Token.LEVEL) {
             sb.append(record.GetLevel());
         }
@@ -223,9 +244,9 @@ public class LogPattern {
         MAPPEDCONTEXT,
         ALLMAPPEDCONTEXT,
         DURATION,
-        SECTION,
         VALUE,
         LEVEL,
-        NAME
+        NAME,
+        SIMPLENAME
     }
 }
