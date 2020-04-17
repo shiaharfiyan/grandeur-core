@@ -159,7 +159,7 @@ By default, this config file will be created during runtime if there's no any .j
 ### Pattern 
 | Pattern Name | Pattern Type | Pattern Description |
 |----------------------|---------------------|---------------------------------------------------------------------------|
-| %d | DateTime | Use Default DateTime Pattern |
+| %d | DateTime | Use Default DateTime Pattern _(yyyy-MM-dd HH:mm:ss)_|
 | %d{datetime_pattern} | DateTime | Specify DateTime with   custom "datetime_pattern", see Java Documentation |
 | %t | Thread Name | Thread Name which call the logger |
 | %z | Duration | s,ms |
