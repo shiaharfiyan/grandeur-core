@@ -182,13 +182,15 @@ public class LogPattern {
                 sbPattern.setLength(0);
             }
         } else if (t == Token.ALLMAPPEDCONTEXT) {
-            if (!sbPattern.toString().equals("")) {
-                HashMap<String, String> localMap = DC.Maps();
+            HashMap<String, String> localMap = DC.Maps();
+            if (localMap.size() > 0) {
                 StringBuilder kvBuilder = new StringBuilder();
                 for (String key : localMap.keySet())
                     kvBuilder.append(key).append("=").append(localMap.get(key)).append(", ");
                 kvBuilder.setLength(Math.max(kvBuilder.length() - 2, 0));
                 sb.append(kvBuilder.toString());
+            } else {
+                sb.append("null");
             }
         } else if (t == Token.VALUE) {
             sb.append(record.GetValue());

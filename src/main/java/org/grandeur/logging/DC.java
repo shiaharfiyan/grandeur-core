@@ -62,11 +62,10 @@ public class DC {
     }
 
     public static HashMap<String, String> Maps() {
-        HashMap<String, String> maps = new HashMap<>();
         if (!mdcContexts.containsKey(LogManager.GetCurrent()))
             mdcContexts.put(LogManager.GetCurrent(), new HashMap<>());
 
-        return (HashMap<String, String>) maps.clone();
+        return (HashMap<String, String>) mdcContexts.get(LogManager.GetCurrent()).clone();
     }
 
     public static Context Peek() {

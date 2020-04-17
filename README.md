@@ -11,12 +11,22 @@ import org.grandeur.logging.LogManager;
 public class Sample {
     private static Logger logger = LogManager.GetLogger(Sample.class);
     public static void main(String[] args) {
-        logger.Info("Hello, its grandeur logtrace!");
+        logger.Info("Hello, its grandeur log trace!");
     }
 }
 ```
-### Log with _Nested Diagnostic Context_
+#### _Pattern_
+```json
+{
+  "globalPattern": "%d{yyyy/MM/dd HH:mm:ss,SSS} [%t] %n %l : %v",
+}
+```
+#### Output
+```text
+2020/04/17 16:42:06,685 [main] Sample INFO : Hello, its grandeur log trace!
+```
 
+### Log with _Nested Diagnostic Context_
 ```java
 import org.grandeur.logging.DC;
 import org.grandeur.logging.LogManager;
@@ -44,16 +54,13 @@ public class Sample {
     }
 }
 ```
-
 #### Output
 ```text
 2020/04/17 14:16:05,550 [main] [entry] Sample INFO : Hello, its grandeur log trace
 2020/04/17 14:16:05,550 [main] [update] Sample INFO : Has been updated
 2020/04/17 14:16:05,550 [main] [entry] Sample INFO : update completed!
 ```
-
 ### Log with _Mapped Diagnostic Context_
-
 ```java
 import org.grandeur.logging.DC;
 import org.grandeur.logging.LogManager;
@@ -75,16 +82,12 @@ public class Sample {
     }
 }
 ```
-
-#### Json Config file for _Mapped Diagnostic Context_
+#### _Pattern Mapped Diagnostic Context_
 ```json
 {
-  ...
   "globalPattern": "%d{yyyy/MM/dd HH:mm:ss,SSS} [%t] [%c] %n %l : [firstName=%x{firstname}, lastname=%x{lastname}] %v",
-  ...
 }
 ```
-
 #### Output
 ```text
 2020/04/17 16:04:23,036 [main] [entry] Sample INFO : [firstName=harfiyan, lastname=shia] Hello, its grandeur logtrace!
@@ -94,7 +97,6 @@ public class Sample {
 
 # Config file
 By default, this config file will be created during runtime if there's no any .json file provided and it is required to enable this logging, otherwise only stdout.
-
 ### Json Config file Default
 ```json
 {
