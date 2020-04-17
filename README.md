@@ -2,6 +2,95 @@
 
 Gandeur LogTrace is a simple logging library with nested diagnostic context and mapped diagnostic context to allow easier tracing with customizable config for log appender.
 
+# Usage
+
+### Simple Usage
+```java
+import org.grandeur.logging.LogManager;
+
+public class Sample {
+    private static Logger logger = LogManager.GetLogger(Sample.class);
+    public static void main(String[] args) {
+        logger.Info("Hello, its grandeur logtrace!");
+    }
+}
+```
+### Log with _Nested Diagnostic Context_
+
+```java
+import org.grandeur.logging.DC;
+import org.grandeur.logging.LogManager;
+
+public class Sample {
+    private static Logger logger = LogManager.GetLogger(Sample.class);
+    public static void main(String[] args) {
+        DC.Push("entry");
+        DC.Push("update");
+        //Do something
+        logger.Info("Has been updated");
+        DC.Pop();
+        logger.Info("update completed!");
+        DC.Pop();
+
+        //or        
+
+        try(Context parent = DC.Push("entry")) {
+            logger.Info("Hello, its grandeur logtrace!");
+            try (Context child = DC.Push("update")) {
+                logger.Info("Has been updated");
+            }
+            logger.Info("update completed!");
+        }
+    }
+}
+```
+
+#### Output
+```text
+2020/04/17 14:16:05,550 [main] [entry] Sample INFO : Hello, its grandeur log trace
+2020/04/17 14:16:05,550 [main] [update] Sample INFO : Has been updated
+2020/04/17 14:16:05,550 [main] [entry] Sample INFO : update completed!
+```
+
+### Log with _Mapped Diagnostic Context_
+
+```java
+import org.grandeur.logging.DC;
+import org.grandeur.logging.LogManager;
+
+public class Sample {
+    private static Logger logger = LogManager.GetLogger(Sample.class);
+    public static void main(String[] args) {
+        try(Context parent = DC.Push("entry")) {
+            DC.Put("firstname", "harfiyan");
+            DC.Put("lastname", "shia");
+            logger.Info("Hello, its grandeur logtrace!");
+            try (Context child = DC.Push("update")) {
+                logger.Info("Has been updated");
+            }
+            DC.Remove("firstname");
+            DC.Remove("lastname");
+            logger.Info("update completed!");
+        }
+    }
+}
+```
+
+#### Json Config file for _Mapped Diagnostic Context_
+```json
+{
+  ...
+  "globalPattern": "%d{yyyy/MM/dd HH:mm:ss,SSS} [%t] [%c] %n %l : [firstName=%x{firstname}, lastname=%x{lastname}] %v",
+  ...
+}
+```
+
+#### Output
+```text
+2020/04/17 16:04:23,036 [main] [entry] Sample INFO : [firstName=harfiyan, lastname=shia] Hello, its grandeur logtrace!
+2020/04/17 16:04:23,037 [main] [update] Sample INFO : [firstName=harfiyan, lastname=shia] Has been updated
+2020/04/17 16:04:23,041 [main] [entry] Sample INFO : [firstName=null, lastname=null] update completed!
+```
 
 # Config file
 By default, this config file will be created during runtime if there's no any .json file provided and it is required to enable this logging, otherwise only stdout.
@@ -9,7 +98,7 @@ By default, this config file will be created during runtime if there's no any .j
 ### Json Config file Default
 ```json
 {
-  "globalPattern": "%d{yyyy/MM/dd HH:mm:ss,SSS} [%t] [%c] %n %N %z %l : %v",
+  "globalPattern": "%d{yyyy/MM/dd HH:mm:ss,SSS} [%t] [%c] %n %z %l : %v",
   "loggerList": [
     {
       "bindTo": "*",
@@ -68,7 +157,8 @@ By default, this config file will be created during runtime if there's no any .j
 | %z | Duration | s,ms |
 | %c | Nested Context | Display only latest tag within current Context |
 | %C | Nested Context | Display all tag within   current Context |
-| %n | Log Name | Display Log Name |
+| %n | Log Name | Display Log Name, if use class name, it will display simple name |
+| %N | Log Name | Display Log Name, if use class name, it will display complete name |
 | %l | Log Level | INFO, WARN, DEBUG, ERROR |
 | %i | Nested Context   ID | Display only latest Nested Context ID |
 | %v | Log Message | Content to log |

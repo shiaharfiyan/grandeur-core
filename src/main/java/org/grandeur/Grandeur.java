@@ -1,5 +1,6 @@
 package org.grandeur;
 
+import org.grandeur.logging.Context;
 import org.grandeur.logging.DC;
 import org.grandeur.logging.LogConfiguration;
 import org.grandeur.logging.LogManager;
@@ -37,14 +38,19 @@ public enum Grandeur {
         LogConfiguration.Instance.SetFileName(Grandeur.class.getSimpleName() + ".json");
     }
 
+    private static Logger logger = LogManager.GetLogger("test");
     public static void main(String[] args) {
-        Logger logger = LogManager.GetLogger(Grandeur.class);
-        DC.Push("api-payment");
-        DC.Put("name", "Fitra");
-        logger.Info("test ora opo opo to");
-        logger.Info("test");
-        DC.Pop();
-        DC.Push("api-payment");
+        try(Context parent = DC.Push("entry")) {
+            DC.Put("firstname", "harfiyan");
+            DC.Put("lastname", "shia");
+            logger.Info("Hello, its grandeur logtrace!");
+            try (Context child = DC.Push("update")) {
+                logger.Info("Has been updated");
+            }
+            DC.Remove("firstname");
+            DC.Remove("lastname");
+            logger.Info("update completed!");
+        }
     }
 
     public boolean LockExists(GrandeurLockBase lock) {

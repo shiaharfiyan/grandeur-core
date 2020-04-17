@@ -63,7 +63,7 @@ public abstract class GrandeurLockBase implements AutoCloseable {
             if (!monitoredFileLock.exists()) {
                 boolean created = monitoredFileLock.createNewFile();
                 if (created) {
-                    LogManager.GetLogger(Grandeur.class).Info(GetName() + ".lock has been created!");
+                    LogManager.GetLogger(Grandeur.class).Debug(GetName() + ".lock has been created!");
                 }
             }
 
@@ -85,7 +85,7 @@ public abstract class GrandeurLockBase implements AutoCloseable {
                             }
                         }
                     }, GetDelayCheck(), GetIntervalCheck());
-                    LogManager.GetLogger(Grandeur.class).Info(GetName() + " is running...");
+                    LogManager.GetLogger(Grandeur.class).Debug(GetName() + " is running...");
                 }
             }
         } catch (OverlappingFileLockException ofle) {
@@ -105,7 +105,7 @@ public abstract class GrandeurLockBase implements AutoCloseable {
             }
             File monitoredFileLock = new File(Environment.GetGrandeurLocation() + GetName() + ".lock");
             if (monitoredFileLock.exists() && monitoredFileLock.delete())
-                LogManager.GetLogger(Grandeur.class).Info(GetName() + " stopped...");
+                LogManager.GetLogger(Grandeur.class).Debug(GetName() + " stopped...");
         } catch (Exception e) {
             e.printStackTrace();
         }

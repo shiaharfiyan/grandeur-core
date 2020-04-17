@@ -54,117 +54,72 @@ public class LogPattern {
         StringBuilder sb = new StringBuilder();
         StringBuilder sbPattern = new StringBuilder();
         for (char c : GetPattern().toCharArray()) {
-            switch (c) {
-                case '%':
-                    inVarStart = true;
-                    break;
-                case '{':
-                    inVarPattern = true;
-                    break;
-                case '}':
-                    inVarPattern = false;
-                    break;
-                case 'd':
-                    if (inVarStart && inVarPattern) {
-                        sbPattern.append(c);
-                    } else if (inVarStart) {
-                        tokens.push(Token.DATETIME);
+            if (c == '%' || c == '{' || c == '}') {
+                switch (c) {
+                    case '%':
+                        inVarStart = true;
+                        continue;
+                    case '{':
+                        inVarPattern = true;
+                        continue;
+                    case '}':
+                        inVarPattern = false;
+                        continue;
+                }
+            }
+
+            if (inVarStart) {
+                if (inVarPattern) {
+                    sbPattern.append(c);
+                } else if (c == 'd' || c == 'c' || c == 'C' || c == 'R' || c == 'x' || c == 'X' || c == 't' || c == 'z' || c == 'n' || c == 'N' || c == 'i' || c == 'l' || c == 'v') {
+                    switch (c) {
+                        case 'd':
+                            tokens.push(Token.DATETIME);
+                            break;
+                        case 'c':
+                            tokens.push(Token.NESTEDCONTEXT);
+                            break;
+                        case 'C':
+                            tokens.push(Token.ALLNESTEDCONTEXT);
+                            break;
+                        case 'R':
+                            tokens.push(Token.REVERSEALLNESTEDCONTEXT);
+                            break;
+                        case 'x':
+                            tokens.push(Token.MAPPEDCONTEXT);
+                            break;
+                        case 'X':
+                            tokens.push(Token.ALLMAPPEDCONTEXT);
+                            break;
+                        case 't':
+                            tokens.push(Token.THREAD);
+                            break;
+                        case 'z':
+                            tokens.push(Token.DURATION);
+                            break;
+                        case 'n':
+                            tokens.push(Token.SIMPLENAME);
+                            break;
+                        case 'N':
+                            tokens.push(Token.NAME);
+                            break;
+                        case 'i':
+                            tokens.push(Token.NESTEDCONTEXTID);
+                            break;
+                        case 'l':
+                            tokens.push(Token.LEVEL);
+                            break;
+                        case 'v':
+                            tokens.push(Token.VALUE);
+                            break;
                     }
-                    break;
-                case 'c':
-                    if (inVarStart && inVarPattern) {
-                        sbPattern.append(c);
-                    } else if (inVarStart) {
-                        tokens.push(Token.NESTEDCONTEXT);
-                    }
-                    break;
-                case 'C':
-                    if (inVarStart && inVarPattern) {
-                        sbPattern.append(c);
-                    } else if (inVarStart) {
-                        tokens.push(Token.ALLNESTEDCONTEXT);
-                    }
-                    break;
-                case 'R':
-                    if (inVarStart && inVarPattern) {
-                        sbPattern.append(c);
-                    } else if (inVarStart) {
-                        tokens.push(Token.REVERSEALLNESTEDCONTEXT);
-                    }
-                    break;
-                case 'x':
-                    if (inVarStart && inVarPattern) {
-                        sbPattern.append(c);
-                    } else if (inVarStart) {
-                        tokens.push(Token.MAPPEDCONTEXT);
-                    }
-                    break;
-                case 'X':
-                    if (inVarStart && inVarPattern) {
-                        sbPattern.append(c);
-                    } else if (inVarStart) {
-                        tokens.push(Token.ALLMAPPEDCONTEXT);
-                    }
-                    break;
-                case 't':
-                    if (inVarStart && inVarPattern) {
-                        sbPattern.append(c);
-                    } else if (inVarStart) {
-                        tokens.push(Token.THREAD);
-                    }
-                    break;
-                case 'z':
-                    if (inVarStart && inVarPattern) {
-                        sbPattern.append(c);
-                    } else if (inVarStart) {
-                        tokens.push(Token.DURATION);
-                    }
-                    break;
-                case 'n':
-                    if (inVarStart && inVarPattern) {
-                        sbPattern.append(c);
-                    } else if (inVarStart) {
-                        tokens.push(Token.SIMPLENAME);
-                    }
-                    break;
-                case 'N':
-                    if (inVarStart && inVarPattern) {
-                        sbPattern.append(c);
-                    } else if (inVarStart) {
-                        tokens.push(Token.NAME);
-                    }
-                    break;
-                case 'i':
-                    if (inVarStart && inVarPattern) {
-                        sbPattern.append(c);
-                    } else if (inVarStart) {
-                        tokens.push(Token.NESTEDCONTEXTID);
-                    }
-                    break;
-                case 'l':
-                    if (inVarStart && inVarPattern) {
-                        sbPattern.append(c);
-                    } else if (inVarStart) {
-                        tokens.push(Token.LEVEL);
-                    }
-                    break;
-                case 'v':
-                    if (inVarStart && inVarPattern) {
-                        sbPattern.append(c);
-                    } else if (inVarStart) {
-                        tokens.push(Token.VALUE);
-                    }
-                    break;
-                default:
-                    if (inVarStart && !inVarPattern) {
-                        inVarStart = false;
-                        Process(record, sb, sbPattern);
-                        sb.append(c);
-                    } else if (inVarStart) {
-                        sbPattern.append(c);
-                    } else if (!inVarPattern) {
-                        sb.append(c);
-                    }
+                } else {
+                    inVarStart = false;
+                    Process(record, sb, sbPattern);
+                    sb.append(c);
+                }
+            } else {
+                sb.append(c);
             }
         }
 

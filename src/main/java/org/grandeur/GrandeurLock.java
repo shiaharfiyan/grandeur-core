@@ -56,7 +56,7 @@ class GrandeurLock extends GrandeurLockBase {
         if (currentLastModified != file.lastModified()) {
             LogConfiguration.Instance.SetLastModified(file.lastModified());
             LogConfiguration.Instance.Load();
-            threadLogger.Info("Log Configuration file has been touch! " + LogConfiguration.Instance.GetFullPath());
+            threadLogger.Debug("Log Configuration file has been touch! " + LogConfiguration.Instance.GetFullPath());
         }
     }
 
@@ -74,6 +74,6 @@ class GrandeurLock extends GrandeurLockBase {
     public void close() {
         File monitoredFileLock = new File(Environment.GetGrandeurLocation() + GetName() + ".lock");
         if (monitoredFileLock.exists() && monitoredFileLock.delete())
-            LogManager.GetLogger(Grandeur.class).Info(GetName() + " stopped.");
+            LogManager.GetLogger(Grandeur.class).Debug(GetName() + " stopped.");
     }
 }

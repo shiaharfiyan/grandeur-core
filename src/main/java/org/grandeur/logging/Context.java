@@ -53,6 +53,10 @@ public class Context implements AutoCloseable {
         return StringHelper.PadLeft(StringHelper.Limit(String.valueOf(Math.abs(id)), 15), 15, '0');
     }
 
+    public void UseLogger(Logger logger) {
+        this.logger = logger;
+    }
+
     public void UseLogger(Class<?> clazz) {
         logger = LogManager.GetLogger(clazz);
     }
@@ -84,7 +88,8 @@ public class Context implements AutoCloseable {
             Instant startInstant = DateTimeHelper.ToInstant(startTime, DateTimeHelper.DefaultFormat, Locale.getDefault(), ZoneId.systemDefault());
             Instant endInstant = DateTimeHelper.ToInstant(endTime, DateTimeHelper.DefaultFormat, Locale.getDefault(), ZoneId.systemDefault());
             Duration duration = Duration.between(startInstant, endInstant);
-            GetLogger().Debug("Context removed with total duration = " + duration.getSeconds() + "." + duration.getNano() + "s");
+            if (logger != null)
+                GetLogger().Debug("Context removed with total duration = " + duration.getSeconds() + "." + duration.getNano() + "s");
             DC.Pop();
         } catch (Exception e) {
             e.printStackTrace();
