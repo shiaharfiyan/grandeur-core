@@ -5,11 +5,14 @@ import org.grandeur.logging.DC;
 import org.grandeur.logging.LogManager;
 import org.grandeur.logging.interfaces.Logger;
 import org.grandeur.utils.Environment;
+import org.grandeur.utils.helpers.ArrayHelper;
 
 import java.io.*;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *     Grandeur - a tool for logging, create config file based on ini and
@@ -33,7 +36,7 @@ import java.util.HashMap;
  */
 @SuppressWarnings("Duplicates")
 public class Ini extends FileSystemBase {
-    private HashMap<String, IniItem> configurationItems = new HashMap<>();
+    private ConcurrentHashMap<String, IniItem> keyItems = new ConcurrentHashMap<>();
     private Logger logger = LogManager.GetLogger(Ini.class);
 
     private Ini(String path, String fileName) {
@@ -61,7 +64,7 @@ public class Ini extends FileSystemBase {
                     if (currentLine.startsWith("[")) {
                         String section = currentLine.substring(1, currentLine.length() - 1);
                         item = new IniItem(section);
-                        config.GetConfigurationItems().put(section, item);
+                        config.GetAll().put(section, item);
                     } else if (item != null) {
                         int pos = currentLine.trim().indexOf("=");
                         if (pos >= 0) {
@@ -89,10 +92,10 @@ public class Ini extends FileSystemBase {
     }
 
     public static void PrintConfiguration(Ini config) {
-        String[] sections = new String[config.GetConfigurationItems().keySet().size()];
-        config.GetConfigurationItems().keySet().toArray(sections);
+        String[] sections = new String[config.GetAll().keySet().size()];
+        config.GetAll().keySet().toArray(sections);
         for (String section : sections) {
-            IniItem item = config.GetConfigurationItems().get(section);
+            IniItem item = config.GetAll().get(section);
             System.out.println("[" + item.GetSection() + "]");
 
             String[] keys = new String[item.GetList().keySet().size()];
@@ -104,20 +107,42 @@ public class Ini extends FileSystemBase {
     }
 
     public int GetSectionCount() {
-        return configurationItems.size();
+        return keyItems.size();
     }
 
-    public HashMap<String, IniItem> GetConfigurationItems() {
-        return configurationItems;
+
+    private ConcurrentHashMap<String, IniItem> GetAll() {
+        return keyItems;
+    }
+
+    public String[] GetSections() {
+        List<String> sections = new ArrayList<>(keyItems.keySet());
+        return ArrayHelper.ToArray(String.class, sections);
+    }
+
+    public String[] GetKeys(String section) {
+        if (keyItems.containsKey(section)) {
+            List<String> keys = new ArrayList<>(keyItems.get(section).GetList().keySet());
+            return ArrayHelper.ToArray(String.class, keys);
+        }
+
+        return null;
+    }
+
+    public IniItem GetKeyItems(String section) {
+        if (keyItems.containsKey(section))
+            return keyItems.get(section);
+
+        return null;
     }
 
     public void Put(String section, String key, Object value) {
-        IniItem item = GetConfigurationItems().get(section);
+        IniItem item = GetAll().get(section);
         if (item == null) {
             item = new IniItem(section);
             item.Put(key, value);
 
-            this.GetConfigurationItems().put(section, item);
+            this.GetAll().put(section, item);
         } else {
             item.Put(key, value);
         }
@@ -129,10 +154,10 @@ public class Ini extends FileSystemBase {
             OutputStream stream = new FileOutputStream(GetFileName());
             OutputStreamWriter writer = new OutputStreamWriter(stream);
 
-            String[] ciKeys = new String[GetConfigurationItems().keySet().size()];
-            GetConfigurationItems().keySet().toArray(ciKeys);
+            String[] ciKeys = new String[GetAll().keySet().size()];
+            GetAll().keySet().toArray(ciKeys);
             for (String ciKey : ciKeys) {
-                IniItem item = GetConfigurationItems().get(ciKey);
+                IniItem item = GetAll().get(ciKey);
 
                 writer.write("[" + ciKey + "]\r\n");
 
@@ -150,7 +175,7 @@ public class Ini extends FileSystemBase {
     }
 
     public boolean GetBoolean(String section, String key, boolean defvalue) {
-        IniItem item = GetConfigurationItems().get(section);
+        IniItem item = GetAll().get(section);
         if (item != null) {
             Object value = item.GetList().get(key);
             if (value != null) {
@@ -162,7 +187,7 @@ public class Ini extends FileSystemBase {
     }
 
     public long GetLong(String section, String key, long defvalue) {
-        IniItem item = configurationItems.get(section);
+        IniItem item = keyItems.get(section);
         if (item != null) {
             Object value = item.GetList().get(key);
             if (value != null) {
@@ -174,7 +199,7 @@ public class Ini extends FileSystemBase {
     }
 
     public int GetInteger(String section, String key, int defvalue) {
-        IniItem item = configurationItems.get(section);
+        IniItem item = keyItems.get(section);
         if (item != null) {
             Object value = item.GetList().get(key);
             if (value != null) {
@@ -186,7 +211,7 @@ public class Ini extends FileSystemBase {
     }
 
     public float GetFloat(String section, String key, float defvalue) {
-        IniItem item = configurationItems.get(section);
+        IniItem item = keyItems.get(section);
         if (item != null) {
             Object value = item.GetList().get(key);
             if (value != null) {
@@ -198,7 +223,7 @@ public class Ini extends FileSystemBase {
     }
 
     public double GetDouble(String section, String key, double defvalue) {
-        IniItem item = configurationItems.get(section);
+        IniItem item = keyItems.get(section);
         if (item != null) {
             Object value = item.GetList().get(key);
             if (value != null) {
@@ -210,7 +235,7 @@ public class Ini extends FileSystemBase {
     }
 
     public String GetString(String section, String key, String defvalue) {
-        IniItem item = configurationItems.get(section);
+        IniItem item = keyItems.get(section);
         if (item != null) {
             Object value = item.GetList().get(key);
             if (value != null) {
@@ -222,7 +247,7 @@ public class Ini extends FileSystemBase {
     }
 
     public BigInteger GetBigInteger(String section, String key, BigInteger defvalue) {
-        IniItem item = configurationItems.get(section);
+        IniItem item = keyItems.get(section);
         if (item != null) {
             Object value = item.GetList().get(key);
             if (value != null) {
@@ -251,7 +276,7 @@ public class Ini extends FileSystemBase {
                     if (currentLine.startsWith("[")) {
                         String section = currentLine.substring(1, currentLine.length() - 1);
                         item = new IniItem(section);
-                        GetConfigurationItems().put(section, item);
+                        GetAll().put(section, item);
                     } else if (item != null) {
                         int pos = currentLine.trim().indexOf("=");
                         if (pos >= 0) {
@@ -283,11 +308,11 @@ public class Ini extends FileSystemBase {
     static class IniItem {
         private String section;
 
-        private HashMap<String, Object> list;
+        private ConcurrentHashMap<String, Object> list;
 
         IniItem(String section) {
             this.section = section;
-            this.list = new HashMap<>();
+            this.list = new ConcurrentHashMap<>();
         }
 
         public Object Get(String key) {
@@ -298,7 +323,7 @@ public class Ini extends FileSystemBase {
             return section;
         }
 
-        public HashMap<String, Object> GetList() {
+        public ConcurrentHashMap<String, Object> GetList() {
             return list;
         }
 
