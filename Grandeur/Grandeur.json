@@ -1,0 +1,29 @@
+{
+  "globalPattern": "%d{yyyy/MM/dd HH:mm:ss,SSS} [%t] %n %l : %v",
+  "loggerList": [
+    {
+      "bindTo": "*",
+      "appenderList": [
+        {
+          "type": "org.grandeur.logging.appenders.ConsoleLogAppender",
+          "level": "info"
+        },
+        {
+          "fileName": "Grandeur",
+          "path": "{{grandeurlocation}}",
+          "type": "org.grandeur.logging.appenders.FileLogAppender",
+          "level": "info",
+          "keeper": {
+            "enabled": true,
+            "sizeLimit": 104857600,
+            "fileToKeep": 20,
+            "prefix": null,
+            "suffix": null,
+            "autoMove": true,
+            "autoCreateArchiveFolder": true
+          }
+        }
+      ]
+    }
+  ]
+}

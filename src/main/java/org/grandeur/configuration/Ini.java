@@ -1,6 +1,7 @@
 package org.grandeur.configuration;
 
 import org.grandeur.FileSystemBase;
+import org.grandeur.logging.Context;
 import org.grandeur.logging.DC;
 import org.grandeur.logging.LogManager;
 import org.grandeur.logging.interfaces.Logger;
@@ -43,49 +44,12 @@ public class Ini extends FileSystemBase {
         super(path, fileName);
     }
 
-    public static Ini Load(String configFilename) throws IOException {
+    public static Ini Load(String configFilename) {
         Ini config = null;
         File file = new File(configFilename);
         if ((file.exists()) && (!file.isDirectory())) {
-            config = new Ini(file.getPath(), file.getName());
-            config.SetFileName(configFilename);
-            try {
-                String currentLine = "";
-                InputStream fis = new FileInputStream(file.getPath());
-                InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
-                BufferedReader br = new BufferedReader(isr);
-
-                IniItem item = null;
-                while ((currentLine = br.readLine()) != null) {
-                    if (currentLine.startsWith(";") || currentLine.trim().equalsIgnoreCase("")) {
-                        continue;
-                    }
-
-                    if (currentLine.startsWith("[")) {
-                        String section = currentLine.substring(1, currentLine.length() - 1);
-                        item = new IniItem(section);
-                        config.GetAll().put(section, item);
-                    } else if (item != null) {
-                        int pos = currentLine.trim().indexOf("=");
-                        if (pos >= 0) {
-                            String key = currentLine.substring(0, pos);
-                            if (pos < currentLine.length() - 1) {
-                                String value = currentLine.substring(pos + 1);
-                                item.GetList().put(key.trim(), Environment.Replace(value));
-                            } else {
-                                item.GetList().put(key.trim(), "");
-                            }
-                        }
-                    }
-                }
-
-                br.close();
-                isr.close();
-                fis.close();
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
-                e.printStackTrace();
-            }
+            config = new Ini(file.getParent(), file.getName());
+            config.Update();
         }
 
         return config;
@@ -125,13 +89,6 @@ public class Ini extends FileSystemBase {
             List<String> keys = new ArrayList<>(keyItems.get(section).GetList().keySet());
             return ArrayHelper.ToArray(String.class, keys);
         }
-
-        return null;
-    }
-
-    public IniItem GetKeyItems(String section) {
-        if (keyItems.containsKey(section))
-            return keyItems.get(section);
 
         return null;
     }
@@ -259,48 +216,47 @@ public class Ini extends FileSystemBase {
     }
 
     public void Update() {
-        DC.Push("Update");
-        logger.Info("Updating configuration file [" + GetFileName() + "]");
-        File file = new File(GetFileName());
-        if ((file.exists()) && (!file.isDirectory())) {
-            try {
-                String currentLine = "";
-                InputStream fis = new FileInputStream(file.getPath());
-                InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
-                BufferedReader br = new BufferedReader(isr);
-                IniItem item = null;
-                while ((currentLine = br.readLine()) != null) {
-                    if (currentLine.startsWith(";") || currentLine.trim().equalsIgnoreCase("")) {
-                        continue;
-                    }
-                    if (currentLine.startsWith("[")) {
-                        String section = currentLine.substring(1, currentLine.length() - 1);
-                        item = new IniItem(section);
-                        GetAll().put(section, item);
-                    } else if (item != null) {
-                        int pos = currentLine.trim().indexOf("=");
-                        if (pos >= 0) {
-                            String key = currentLine.substring(0, pos);
-                            if (pos < currentLine.length() - 1) {
-                                String value = currentLine.substring(pos + 1);
-                                item.GetList().put(key.trim(), Environment.Replace(value));
-                            } else {
-                                item.GetList().put(key.trim(), "");
+        try (Context context = DC.Push("Update")) {
+            logger.Info("Updating configuration file [" + GetFullPath() + "]");
+            File file = new File(GetFullPath());
+            if ((file.exists()) && (!file.isDirectory())) {
+                try {
+                    String currentLine = "";
+                    InputStream fis = new FileInputStream(GetFullPath());
+                    InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
+                    BufferedReader br = new BufferedReader(isr);
+                    IniItem item = null;
+                    while ((currentLine = br.readLine()) != null) {
+                        if (currentLine.startsWith(";") || currentLine.trim().equalsIgnoreCase("")) {
+                            continue;
+                        }
+                        if (currentLine.startsWith("[")) {
+                            String section = currentLine.substring(1, currentLine.length() - 1);
+                            item = new IniItem(section);
+                            GetAll().put(section, item);
+                        } else if (item != null) {
+                            int pos = currentLine.trim().indexOf("=");
+                            if (pos >= 0) {
+                                String key = currentLine.substring(0, pos);
+                                if (pos < currentLine.length() - 1) {
+                                    String value = currentLine.substring(pos + 1);
+                                    item.GetList().put(key.trim(), Environment.Replace(value));
+                                } else {
+                                    item.GetList().put(key.trim(), "");
+                                }
+                                logger.Info(item.GetSection() + " => " + key.trim() + " => " + item.GetList().get(key.trim()));
                             }
-                            logger.Info(item.GetSection() + " => " + key.trim() + " => " + item.GetList().get(key.trim()));
                         }
                     }
-                }
-                br.close();
-                isr.close();
-                fis.close();
+                    br.close();
+                    isr.close();
+                    fis.close();
 
-                logger.Info("Configuration has been updated!");
-            } catch (IOException e) {
-                logger.Exception(e);
-                e.printStackTrace();
-            } finally {
-                DC.Pop();
+                    logger.Info("Configuration has been updated!");
+                } catch (IOException e) {
+                    logger.Exception(e);
+                    e.printStackTrace();
+                }
             }
         }
     }
