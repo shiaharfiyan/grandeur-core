@@ -1,6 +1,9 @@
 package org.grandeur.logging;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
 /**
  *     Grandeur - a tool for logging, create config file based on ini and
@@ -24,11 +27,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DC {
     private volatile static ConcurrentHashMap<LogContext, Stack<Context>> ndcContext;
-    private volatile static ConcurrentHashMap<LogContext, HashMap<String, String>> mdcContexts;
 
     static {
         ndcContext = new ConcurrentHashMap<>();
-        mdcContexts = new ConcurrentHashMap<>();
     }
 
     public static Context Push(String context) {
@@ -61,13 +62,6 @@ public class DC {
         return contexts;
     }
 
-    public static HashMap<String, String> Maps() {
-        if (!mdcContexts.containsKey(LogManager.GetCurrent()))
-            mdcContexts.put(LogManager.GetCurrent(), new HashMap<>());
-
-        return (HashMap<String, String>) mdcContexts.get(LogManager.GetCurrent()).clone();
-    }
-
     public static Context Peek() {
         if (ndcContext.size() > 0) {
             if (!ndcContext.containsKey(LogManager.GetCurrent()))
@@ -78,35 +72,5 @@ public class DC {
         }
 
         return Context.NULL;
-    }
-
-    public static void Put(String key, String value) {
-        if (!mdcContexts.containsKey(LogManager.GetCurrent()))
-            mdcContexts.put(LogManager.GetCurrent(), new HashMap<>());
-
-        mdcContexts.get(LogManager.GetCurrent())
-                .put(key, value);
-    }
-
-    public static void Remove(String key) {
-        if (!mdcContexts.containsKey(LogManager.GetCurrent()))
-            mdcContexts.put(LogManager.GetCurrent(), new HashMap<>());
-
-        mdcContexts.get(LogManager.GetCurrent())
-                .remove(key);
-    }
-
-    public static String Get(String key) {
-        if (mdcContexts.size() > 0) {
-            if (!mdcContexts.containsKey(LogManager.GetCurrent()))
-                mdcContexts.put(LogManager.GetCurrent(), new HashMap<>());
-
-            if (mdcContexts.get(LogManager.GetCurrent()).containsKey(key)) {
-                return mdcContexts.get(LogManager.GetCurrent())
-                        .get(key);
-            }
-        }
-
-        return "null";
     }
 }

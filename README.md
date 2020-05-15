@@ -4,6 +4,14 @@ Gandeur LogTrace is a simple logging library with nested diagnostic context and 
 
 # Usage
 
+### Changes log
+
+```text
+    Version 0.0.9
+    - Mapped Diagnostic Context is now part of Context Object (read Log with Mapped Diagnostic Context section below)
+    - Improved LogPattern parse routine
+```
+
 ### Simple Usage
 ```java
 import org.grandeur.logging.LogManager;
@@ -75,14 +83,16 @@ public class Sample {
     private static Logger logger = LogManager.GetLogger(Sample.class);
     public static void main(String[] args) {
         try(Context parent = DC.Push("entry")) {
-            DC.Put("firstname", "harfiyan");
-            DC.Put("lastname", "shia");
+            parent.Put("firstname", "harfiyan");
+            parent.Put("lastname", "shia");
             logger.Info("Hello, its grandeur logtrace!");
             try (Context child = DC.Push("update")) {
+                child.Put("firstname", "example 1");
                 logger.Info("Has been updated");
+                child.Remove("firstname");
             }
-            DC.Remove("firstname");
-            DC.Remove("lastname");
+            parent.Remove("firstname");
+            parent.Remove("lastname");
             logger.Info("update completed!");
         }
     }

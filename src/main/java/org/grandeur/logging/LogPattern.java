@@ -177,21 +177,19 @@ public class LogPattern {
                 sb.append(spanBuilder.toString());
             }
         } else if (t == Token.MAPPEDCONTEXT) {
-            if (!sbPattern.toString().equals("")) {
-                sb.append(DC.Get(sbPattern.toString()));
-                sbPattern.setLength(0);
+            if (sbPattern.toString().equals("")) {
+                ProcessMaps(sb, sbPattern);
+                return;
             }
+            sb.append(DC.Peek().Get(sbPattern.toString()));
+            sbPattern.setLength(0);
         } else if (t == Token.ALLMAPPEDCONTEXT) {
-            HashMap<String, String> localMap = DC.Maps();
-            if (localMap.size() > 0) {
-                StringBuilder kvBuilder = new StringBuilder();
-                for (String key : localMap.keySet())
-                    kvBuilder.append(key).append("=").append(localMap.get(key)).append(", ");
-                kvBuilder.setLength(Math.max(kvBuilder.length() - 2, 0));
-                sb.append(kvBuilder.toString());
-            } else {
-                sb.append("null");
+            if (!sbPattern.toString().equals("")) {
+                sb.append(DC.Peek().Get(sbPattern.toString()));
+                sbPattern.setLength(0);
+                return;
             }
+            ProcessMaps(sb, sbPattern);
         } else if (t == Token.VALUE) {
             sb.append(record.GetValue());
         } else if (t == Token.DURATION) {
@@ -209,6 +207,20 @@ public class LogPattern {
         } else if (t == Token.LEVEL) {
             sb.append(record.GetLevel());
         }
+    }
+
+    private void ProcessMaps(StringBuilder sb, StringBuilder sbPattern) {
+        HashMap<String, String> localMap = DC.Peek().Maps();
+        if (localMap.size() > 0) {
+            StringBuilder kvBuilder = new StringBuilder();
+            for (String key : localMap.keySet())
+                kvBuilder.append(key).append("=").append(localMap.get(key)).append(", ");
+            kvBuilder.setLength(Math.max(kvBuilder.length() - 2, 0));
+            sb.append(kvBuilder.toString());
+        } else {
+            sb.append("null");
+        }
+        sbPattern.setLength(0);
     }
 
     public enum Token {

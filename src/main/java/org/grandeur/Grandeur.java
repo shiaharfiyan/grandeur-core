@@ -41,14 +41,16 @@ public enum Grandeur {
     private static Logger logger = LogManager.GetLogger("test");
     public static void main(String[] args) {
         try(Context parent = DC.Push("entry")) {
-            DC.Put("firstname", "harfiyan");
-            DC.Put("lastname", "shia");
+            parent.Put("firstname", "harfiyan");
+            parent.Put("lastname", "shia");
             logger.Info("Hello, its grandeur logtrace!");
             try (Context child = DC.Push("update")) {
+                child.Put("firstname", "xxxx");
                 logger.Info("Has been updated");
+                child.Remove("firstname");
             }
-            DC.Remove("firstname");
-            DC.Remove("lastname");
+            parent.Remove("firstname");
+            parent.Remove("lastname");
             logger.Info("update completed!");
         }
     }

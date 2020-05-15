@@ -7,8 +7,11 @@ import org.grandeur.utils.helpers.StringHelper;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  *     Grandeur - a tool for logging, create config file based on ini and
  *     utils
@@ -30,6 +33,7 @@ import java.util.UUID;
  *     along with this program. If not, see http://www.gnu.org/licenses/.
  */
 public class Context implements AutoCloseable {
+    private ConcurrentHashMap<LogContext, HashMap<String, String>> mdcContexts;
     public final static Context NULL = new Context(0, "null");
 
     private String id;
@@ -43,6 +47,7 @@ public class Context implements AutoCloseable {
         this.id = BuildId(id);
         this.value = value;
         this.startTime = DateTimeHelper.GetCompleteDateFormat(Instant.now());
+        this.mdcContexts = new ConcurrentHashMap<>();
     }
 
     public Context(String value) {
@@ -69,6 +74,10 @@ public class Context implements AutoCloseable {
         return logger;
     }
 
+    public LogContext GetLogContext() {
+        return LogManager.GetCurrent();
+    }
+
     public String GetId() {
         return id;
     }
@@ -79,6 +88,43 @@ public class Context implements AutoCloseable {
 
     public String GetStartTime() {
         return startTime;
+    }
+
+    public HashMap<String, String> Maps() {
+        if (!mdcContexts.containsKey(LogManager.GetCurrent()))
+            mdcContexts.put(LogManager.GetCurrent(), new HashMap<>());
+
+        return (HashMap<String, String>) mdcContexts.get(LogManager.GetCurrent()).clone();
+    }
+
+    public void Put(String key, String value) {
+        if (!mdcContexts.containsKey(LogManager.GetCurrent()))
+            mdcContexts.put(LogManager.GetCurrent(), new HashMap<>());
+
+        mdcContexts.get(LogManager.GetCurrent())
+                .put(key, value);
+    }
+
+    public void Remove(String key) {
+        if (!mdcContexts.containsKey(LogManager.GetCurrent()))
+            mdcContexts.put(LogManager.GetCurrent(), new HashMap<>());
+
+        mdcContexts.get(LogManager.GetCurrent())
+                .remove(key);
+    }
+
+    public String Get(String key) {
+        if (mdcContexts.size() > 0) {
+            if (!mdcContexts.containsKey(LogManager.GetCurrent()))
+                mdcContexts.put(LogManager.GetCurrent(), new HashMap<>());
+
+            if (mdcContexts.get(LogManager.GetCurrent()).containsKey(key)) {
+                return mdcContexts.get(LogManager.GetCurrent())
+                        .get(key);
+            }
+        }
+
+        return "null";
     }
 
     @Override
