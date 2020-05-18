@@ -1,6 +1,6 @@
-package org.grandeur.logging.interfaces;
+package org.grandeur.logging;
 
-import org.grandeur.logging.Level;
+import org.grandeur.utils.helpers.ObjectHelper;
 
 /**
  *     Grandeur - a tool for logging, create config file based on ini and
@@ -22,42 +22,30 @@ import org.grandeur.logging.Level;
  *     You should have received a copy of the GNU General Public License
  *     along with this program. If not, see http://www.gnu.org/licenses/.
  */
-public interface Logger {
-    String GetName();
+    public enum Method {
+        StartWith,
+        EndWith,
+        Contains,
+        Equals,
+        NotContains,
+        Regex;
 
-    boolean AddAppender(LogAppender appender);
+    public static Method Find(String name) {
+        for (Method l : Method.values()) {
+            if (name.toUpperCase().equals(l.name().toUpperCase())) {
+                return l;
+            }
+        }
 
-    LogAppender[] GetLogAppenderList();
+        return null;
+    }
 
-    void CleanAppenderList();
+    public static Method FindWithDefault(String name, Method default_value) {
+        Method l = Find(name);
+        return l == null ? default_value : l;
+    }
 
-    void SetLevel(Level level);
-
-    void Info(String message);
-
-    void Info(String prefix, String[] lines);
-
-    void Warn(String message);
-
-    void Warn(String prefix, String[] lines);
-
-    void Error(String message);
-
-    void Error(String prefix, String[] lines);
-
-    void Debug(String message);
-
-    void Debug(String prefix, String[] lines);
-
-    void Trace(String message);
-
-    void Trace(String prefix, String[] lines);
-
-    <T> void Exception(T e);
-
-    boolean HasAppender(LogAppender appender);
-
-    void UpdateAppender(LogAppender appender, long timeMilli);
-
-    void RemoveAppender(long timeMillis);
+    public static Method Lookup(String name) {
+        return ObjectHelper.Lookup(Method.class, name);
+    }
 }

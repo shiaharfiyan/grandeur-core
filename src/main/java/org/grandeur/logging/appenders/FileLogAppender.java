@@ -10,6 +10,7 @@ import org.grandeur.logging.interfaces.Logger;
 import org.grandeur.logging.keepers.FileLogKeeper;
 import org.grandeur.utils.Environment;
 import org.grandeur.utils.helpers.FileHelper;
+import org.grandeur.utils.helpers.StringHelper;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -104,6 +105,9 @@ public class FileLogAppender extends BaseLogAppender implements FileSystem {
 
         try {
             if (logRecord.GetLevel().GetValue() <= GetLevel().GetValue()) {
+                if (StringHelper.IsNullOrEmpty(logPattern.Parse(logRecord), true))
+                    return;
+
                 bufferedMessages.put(logPattern.Parse(logRecord));
             }
         } catch (InterruptedException e) {

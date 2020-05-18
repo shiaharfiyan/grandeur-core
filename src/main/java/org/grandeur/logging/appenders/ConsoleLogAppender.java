@@ -5,6 +5,7 @@ import org.grandeur.logging.LogPattern;
 import org.grandeur.logging.LogRecord;
 import org.grandeur.logging.abstraction.BaseLogAppender;
 import org.grandeur.logging.interfaces.Logger;
+import org.grandeur.utils.helpers.StringHelper;
 
 import java.util.Date;
 /**
@@ -80,6 +81,9 @@ public class ConsoleLogAppender extends BaseLogAppender {
     }
 
     synchronized void Log(String message) {
+        if (StringHelper.IsNullOrEmpty(message, true))
+            return;
+
         System.out.println(message);
     }
 }

@@ -3,6 +3,13 @@
   "loggerList": [
     {
       "bindTo": "*",
+      "filters": [
+        {
+          "method": "Regex",
+          "area": "Value",
+          "filter": ".*"
+        }
+      ],
       "appenderList": [
         {
           "type": "org.grandeur.logging.appenders.ConsoleLogAppender",

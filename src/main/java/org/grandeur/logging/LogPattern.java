@@ -1,6 +1,7 @@
 package org.grandeur.logging;
 
 import org.grandeur.utils.helpers.DateTimeHelper;
+import org.grandeur.utils.helpers.StringHelper;
 
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -8,6 +9,8 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Stack;
+import java.util.UUID;
+import java.util.regex.Pattern;
 
 /**
  *     Grandeur - a tool for logging, create config file based on ini and
@@ -35,9 +38,21 @@ public class LogPattern {
     private static HashMap<String, SimpleDateFormat> dateFormatters = new HashMap<>();
     private Stack<Token> tokens = new Stack<>();
     private String pattern;
+    private HashMap<String, LogFilter> logFilterList;
 
     public LogPattern(String pattern) {
+        this.logFilterList = new HashMap<>();
         this.pattern = pattern;
+    }
+    public LogPattern(String pattern, LogFilter[] filters) {
+        this(pattern);
+        SetLogFilters(filters);
+    }
+
+    public void SetLogFilters (LogFilter[] filters) {
+        for(LogFilter filter : filters) {
+            logFilterList.put(UUID.randomUUID().toString(), filter);
+        }
     }
 
     public static LogPattern Default() {
@@ -53,6 +68,8 @@ public class LogPattern {
         boolean inVarStart = false;
         StringBuilder sb = new StringBuilder();
         StringBuilder sbPattern = new StringBuilder();
+        boolean processed = true;
+
         for (char c : GetPattern().toCharArray()) {
             if (c == '%' || c == '{' || c == '}') {
                 switch (c) {
@@ -115,7 +132,7 @@ public class LogPattern {
                     }
                 } else {
                     inVarStart = false;
-                    Process(record, sb, sbPattern);
+                    processed = processed && Process(record, sb, sbPattern);
                     sb.append(c);
                 }
             } else {
@@ -124,16 +141,49 @@ public class LogPattern {
         }
 
         while (tokens.size() != 0) {
-            Process(record, sb, sbPattern);
+            processed = processed && Process(record, sb, sbPattern);
         }
+
+        if (!processed)
+            return "";
 
         sb.append(sbPattern.toString());
         return sb.toString();
     }
 
-    public void Process(LogRecord record, StringBuilder sb, StringBuilder sbPattern) {
+    private boolean FindFilter(String source, Area area) {
+        for(LogFilter logFilter : logFilterList.values()) {
+            if (logFilter.GetArea() == area) {
+                switch (logFilter.GetMethod()) {
+                    case Contains:
+                        return source.contains(logFilter.GetFilter());
+                    case Equals:
+                        return source.equals(logFilter.GetFilter());
+                    case StartWith:
+                        return source.startsWith(logFilter.GetFilter());
+                    case NotContains:
+                        return !source.contains(logFilter.GetFilter());
+                    case EndWith:
+                        return !source.endsWith(logFilter.GetFilter());
+                    case Regex:
+                        try {
+                            return Pattern.matches(logFilter.GetFilter(), source);
+                        } catch(Exception e) {
+                            System.out.println("Error while parsing regex: " + e.getMessage());
+                            e.printStackTrace();
+                        }
+                    default:
+                        return StringHelper.IsNullOrEmpty(logFilter.GetFilter(), true);
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public boolean Process(LogRecord record, StringBuilder sb, StringBuilder sbPattern) {
         if (tokens.size() == 0)
-            return;
+            return true;
 
         Token t = tokens.pop();
         if (t == Token.DATETIME) {
@@ -144,13 +194,23 @@ public class LogPattern {
                 dateFormatters.put(sbPattern.toString(), new SimpleDateFormat(sbPattern.toString()));
 
             SimpleDateFormat sdf = dateFormatters.get(sbPattern.toString());
-            sb.append(sdf.format(record.GetTimestamp()));
+            String dateTime = sdf.format(record.GetTimestamp());
             sbPattern.setLength(0);
+            if (!FindFilter(dateTime, Area.Date))
+                return false;
+
+            sb.append(dateTime);
         } else if (t == Token.THREAD) {
+            if (!FindFilter(Thread.currentThread().getName(), Area.Thread))
+                return false;
             sb.append(Thread.currentThread().getName());
         } else if (t == Token.NESTEDCONTEXT) {
+            if (!FindFilter(DC.Peek().GetValue(), Area.Context))
+                return false;
             sb.append(DC.Peek().GetValue());
         } else if (t == Token.NESTEDCONTEXTID) {
+            if (!FindFilter(DC.Peek().GetId(), Area.Context))
+                return false;
             sb.append(DC.Peek().GetId());
         } else if (t == Token.ALLNESTEDCONTEXT) {
             if (DC.Stacks(false) == null) {
@@ -162,6 +222,8 @@ public class LogPattern {
                         spanBuilder.append(context.GetValue()).append(" ");
                 } else spanBuilder.append("null ");
                 spanBuilder.setLength(Math.max(spanBuilder.length() - 1, 0));
+                if (!FindFilter(spanBuilder.toString(), Area.Context))
+                    return false;
                 sb.append(spanBuilder.toString());
             }
         } else if (t == Token.REVERSEALLNESTEDCONTEXT) {
@@ -174,23 +236,34 @@ public class LogPattern {
                         spanBuilder.append(context.GetValue()).append(" ");
                 } else spanBuilder.append("null ");
                 spanBuilder.setLength(Math.max(spanBuilder.length() - 1, 0));
+                if (!FindFilter(spanBuilder.toString(), Area.Context))
+                    return false;
                 sb.append(spanBuilder.toString());
             }
         } else if (t == Token.MAPPEDCONTEXT) {
             if (sbPattern.toString().equals("")) {
-                ProcessMaps(sb, sbPattern);
-                return;
+                return ProcessMaps(sb);
             }
-            sb.append(DC.Peek().Get(sbPattern.toString()));
+            String mappedContext = DC.Peek().Get(sbPattern.toString());
             sbPattern.setLength(0);
+            if (!FindFilter(mappedContext, Area.Context)) {
+                return false;
+            }
+            sb.append(mappedContext);
         } else if (t == Token.ALLMAPPEDCONTEXT) {
             if (!sbPattern.toString().equals("")) {
-                sb.append(DC.Peek().Get(sbPattern.toString()));
+                String mappedContext = DC.Peek().Get(sbPattern.toString());
                 sbPattern.setLength(0);
-                return;
+                if (!FindFilter(mappedContext, Area.Context)) {
+                    return false;
+                }
+                sb.append(mappedContext);
+                return true;
             }
-            ProcessMaps(sb, sbPattern);
+            return ProcessMaps(sb);
         } else if (t == Token.VALUE) {
+            if (!FindFilter(record.GetValue(), Area.Value))
+                return false;
             sb.append(record.GetValue());
         } else if (t == Token.DURATION) {
             Context context;
@@ -200,27 +273,39 @@ public class LogPattern {
                 sb.append(duration.getSeconds()).append(".").append(duration.getNano()).append("s");
             }
         } else if (t == Token.NAME) {
+            if (!FindFilter(record.GetLogger().GetName(), Area.LoggerName))
+                return false;
             sb.append(record.GetLogger().GetName());
         } else if (t == Token.SIMPLENAME) {
             String completeName = record.GetLogger().GetName();
+            if (!FindFilter(completeName.substring(completeName.lastIndexOf(".")+1), Area.LoggerName))
+                return false;
             sb.append(completeName.substring(completeName.lastIndexOf(".")+1));
         } else if (t == Token.LEVEL) {
+            if (!FindFilter(record.GetLevel().name(), Area.Level))
+                return false;
             sb.append(record.GetLevel());
         }
+
+        return true;
     }
 
-    private void ProcessMaps(StringBuilder sb, StringBuilder sbPattern) {
+    private boolean ProcessMaps(StringBuilder sb) {
         HashMap<String, String> localMap = DC.Peek().Maps();
         if (localMap.size() > 0) {
             StringBuilder kvBuilder = new StringBuilder();
             for (String key : localMap.keySet())
                 kvBuilder.append(key).append("=").append(localMap.get(key)).append(", ");
             kvBuilder.setLength(Math.max(kvBuilder.length() - 2, 0));
+            if (!FindFilter(kvBuilder.toString(), Area.Context)) {
+                return false;
+            }
             sb.append(kvBuilder.toString());
         } else {
             sb.append("null");
         }
-        sbPattern.setLength(0);
+
+        return true;
     }
 
     public enum Token {

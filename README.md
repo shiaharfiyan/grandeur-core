@@ -7,6 +7,9 @@ Gandeur LogTrace is a simple logging library with nested diagnostic context and 
 ### Changes log
 
 ```text
+    Version 0.1.0
+    - Adding filters to logger, print specific log which contains filter
+
     Version 0.0.9
     - Mapped Diagnostic Context is now part of Context Object (read Log with Mapped Diagnostic Context section below)
     - Improved LogPattern parse routine
@@ -26,7 +29,7 @@ public class Sample {
 #### _Pattern_
 ```json
 {
-  "globalPattern": "%d{yyyy/MM/dd HH:mm:ss,SSS} [%t] %n %l : %v",
+  "globalPattern": "%d{yyyy/MM/dd HH:mm:ss,SSS} [%t] %n %l : %v"
 }
 ```
 #### Output
@@ -65,7 +68,7 @@ public class Sample {
 #### _Pattern Nested Diagnostic Context_
 ```json
 {
-  "globalPattern": "%d{yyyy/MM/dd HH:mm:ss,SSS} [%t] [%c] %n %l : %v",
+  "globalPattern": "%d{yyyy/MM/dd HH:mm:ss,SSS} [%t] [%c] %n %l : %v"
 }
 ```
 #### Output
@@ -101,7 +104,7 @@ public class Sample {
 #### _Pattern Mapped Diagnostic Context_
 ```json
 {
-  "globalPattern": "%d{yyyy/MM/dd HH:mm:ss,SSS} [%t] [%c] %n %l : [firstName=%x{firstname}, lastname=%x{lastname}] %v",
+  "globalPattern": "%d{yyyy/MM/dd HH:mm:ss,SSS} [%t] [%c] %n %l : [firstName=%x{firstname}, lastname=%x{lastname}] %v"
 }
 ```
 #### Output
@@ -120,6 +123,13 @@ By default, this config file will be created during runtime if there's no any .j
   "loggerList": [
     {
       "bindTo": "*",
+      "filters": [
+        {
+          "method": "Regex",
+          "area": "Value",
+          "filter": ".*"
+        }
+      ],
       "appenderList": [
         {
           "type": "org.grandeur.logging.appenders.ConsoleLogAppender",
@@ -151,6 +161,10 @@ By default, this config file will be created during runtime if there's no any .j
 | globalPattern | String | Define the log looks like, will be used as default pattern if there's no specific pattern defined for each appender |
 | loggerList | Array of Object |  |
 |     bindTo | String | Put "*" to bind all Logger, or specify the name of Logger to bind specifically |
+|     filters | Array of Object |  |
+|         method | String | how to apply the filter. possible value: StartWith, EndWith, Contains, Equals, NotContains, Regex |
+|         area | String | area of filter will be applied. possible value: Value, Thread, Context, Date, LoggerName, Level; |
+|         filter | String | Acceptable type "com.rhapsody.logging.appenders.FileLogAppender" and "com.rhapsody.logging.appenders.ConsoleLogAppender" or any class extends LogAppender interface |
 |     appenderList | Array of Object |  |
 |         fileName | String | Name of log, automatically append extension ".log", only   available for "com.rhapsody.logging.appenders.FileLogAppender" |
 |         path | String | Path of Log, automatically   create folder, failed if drive not exists |
@@ -190,7 +204,7 @@ Add the following to your pom.xml
 <dependency>
     <groupId>io.github.shiaharfiyan</groupId>
     <artifactId>grandeur-core</artifactId>
-    <version>0.0.3</version>
+    <version>0.1.0</version>
 </dependency>
 ```
 ### Third-Party Library

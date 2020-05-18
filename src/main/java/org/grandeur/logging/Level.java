@@ -38,7 +38,7 @@ public enum Level {
 
     public static Level Find(String name) {
         for (Level l : Level.values()) {
-            if (name.toUpperCase().equals(l.name())) {
+            if (name.toUpperCase().equals(l.name().toUpperCase())) {
                 return l;
             }
         }

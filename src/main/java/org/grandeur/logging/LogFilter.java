@@ -1,6 +1,4 @@
-package org.grandeur.logging.interfaces;
-
-import org.grandeur.logging.Level;
+package org.grandeur.logging;
 
 /**
  *     Grandeur - a tool for logging, create config file based on ini and
@@ -22,42 +20,32 @@ import org.grandeur.logging.Level;
  *     You should have received a copy of the GNU General Public License
  *     along with this program. If not, see http://www.gnu.org/licenses/.
  */
-public interface Logger {
-    String GetName();
+public class LogFilter {
+    private Method method;
+    private String filter;
+    private Area area;
 
-    boolean AddAppender(LogAppender appender);
+    public Method GetMethod() {
+        return method;
+    }
 
-    LogAppender[] GetLogAppenderList();
+    public void SetMethod(Method method) {
+        this.method = method;
+    }
 
-    void CleanAppenderList();
+    public String GetFilter() {
+        return filter;
+    }
 
-    void SetLevel(Level level);
+    public void SetFilter(String filter) {
+        this.filter = filter;
+    }
 
-    void Info(String message);
+    public Area GetArea() {
+        return area;
+    }
 
-    void Info(String prefix, String[] lines);
-
-    void Warn(String message);
-
-    void Warn(String prefix, String[] lines);
-
-    void Error(String message);
-
-    void Error(String prefix, String[] lines);
-
-    void Debug(String message);
-
-    void Debug(String prefix, String[] lines);
-
-    void Trace(String message);
-
-    void Trace(String prefix, String[] lines);
-
-    <T> void Exception(T e);
-
-    boolean HasAppender(LogAppender appender);
-
-    void UpdateAppender(LogAppender appender, long timeMilli);
-
-    void RemoveAppender(long timeMillis);
+    public void SetArea(Area area) {
+        this.area = area;
+    }
 }

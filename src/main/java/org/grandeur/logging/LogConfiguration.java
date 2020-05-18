@@ -8,6 +8,7 @@ import org.grandeur.logging.appenders.FileLogAppender;
 import org.grandeur.logging.interfaces.LogAppender;
 import org.grandeur.logging.interfaces.Logger;
 import org.grandeur.utils.Environment;
+import org.grandeur.utils.helpers.ArrayHelper;
 
 import java.io.File;
 import java.io.FileReader;
@@ -15,6 +16,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *     Grandeur - a tool for logging, create config file based on ini and
@@ -75,17 +78,29 @@ public enum LogConfiguration implements FileSystem {
             if (je.getAsJsonObject().has("globalPattern")) {
                 globalPattern = je.getAsJsonObject().get("globalPattern").getAsString();
             }
+
             boolean bindToAll = false;
             long timeMilli = Instant.now().toEpochMilli();
             for (int i = 0; i < loggerList.size(); i++) {
                 String jsonBindTo = loggerList.get(i).getAsJsonObject().get("bindTo").getAsString();
+
+                JsonArray filters = loggerList.get(i).getAsJsonObject().get("filters").getAsJsonArray();
+                List<LogFilter> logFilterList = new ArrayList<>();
+                for (int j = 0; j < filters.size() ; j++) {
+                    JsonObject filter = filters.get(j).getAsJsonObject();
+                    LogFilter logFilter = new LogFilter();
+                    logFilter.SetMethod(Method.FindWithDefault(filter.get("method").getAsString(), Method.Contains));
+                    logFilter.SetArea(Area.FindWithDefault(filter.get("area").getAsString(), Area.Value));
+                    logFilter.SetFilter(filter.get("filter").getAsString());
+                    logFilterList.add(logFilter);
+                }
 
                 if (jsonBindTo.equals("*")) {
                     bindToAll = true;
                 }
 
                 JsonArray appenderList = loggerList.get(i).getAsJsonObject().getAsJsonArray("appenderList");
-                LoadAppenderList(logger, appenderList, timeMilli, globalPattern, bindToAll, jsonBindTo);
+                LoadAppenderList(logger, appenderList, ArrayHelper.ToArray(LogFilter.class, logFilterList), timeMilli, globalPattern, bindToAll, jsonBindTo);
             }
 
             if (loggerList.size() == 0)
@@ -93,11 +108,11 @@ public enum LogConfiguration implements FileSystem {
 
         } catch (Exception e) {
             e.printStackTrace();
-            return;
         }
     }
 
     private void LoadAppenderList(Logger loggerToBind, JsonArray appenderList,
+                                  LogFilter[] logFilters,
                                   long timeMilli,
                                   String globalPattern,
                                   boolean bindToAll,
@@ -129,7 +144,7 @@ public enum LogConfiguration implements FileSystem {
                 jsonAppenderPattern = LogPattern.Default().GetPattern();
             }
 
-            appenderObject.SetLogPattern(new LogPattern(jsonAppenderPattern));
+            appenderObject.SetLogPattern(new LogPattern(jsonAppenderPattern, logFilters));
 
             if (appenderObject instanceof FileLogAppender) {
                 String jsonPath = Environment.Replace(appender.get("path").getAsString());

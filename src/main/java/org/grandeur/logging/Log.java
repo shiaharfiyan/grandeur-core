@@ -33,6 +33,7 @@ import java.util.UUID;
  */
 public class Log implements Logger {
     private HashMap<String, LogAppender> logAppenderList;
+    private HashMap<String, LogFilter> logFilterList;
     private String name;
 
     Log(String name) {
@@ -49,6 +50,7 @@ public class Log implements Logger {
         return name;
     }
 
+    @Override
     public boolean AddAppender(LogAppender appender) {
         for (LogAppender currentAppender : logAppenderList.values()) {
             if (currentAppender instanceof FileLogAppender && appender instanceof FileLogAppender) {
