@@ -39,9 +39,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Ini extends FileSystemBase {
     private ConcurrentHashMap<String, IniItem> keyItems = new ConcurrentHashMap<>();
     private Logger logger = LogManager.GetLogger(Ini.class);
+    private long lastModified = 0;
 
     private Ini(String path, String fileName) {
         super(path, fileName);
+        IniManager.Instance.MonitorIni(this);
     }
 
     public static Ini Load(String configFilename) {
@@ -68,6 +70,14 @@ public class Ini extends FileSystemBase {
                 System.out.println(key + "=" + item.GetList().get(key));
             }
         }
+    }
+
+    long GetLastModified() {
+        return lastModified;
+    }
+
+    void SetLastModified(long lastModified) {
+        this.lastModified = lastModified;
     }
 
     public int GetSectionCount() {
@@ -220,6 +230,7 @@ public class Ini extends FileSystemBase {
             logger.Info("Updating configuration file [" + GetFullPath() + "]");
             File file = new File(GetFullPath());
             if ((file.exists()) && (!file.isDirectory())) {
+                SetLastModified(file.lastModified());
                 try {
                     String currentLine = "";
                     InputStream fis = new FileInputStream(GetFullPath());
@@ -244,14 +255,13 @@ public class Ini extends FileSystemBase {
                                 } else {
                                     item.GetList().put(key.trim(), "");
                                 }
-                                logger.Info(item.GetSection() + " => " + key.trim() + " => " + item.GetList().get(key.trim()));
+                                logger.Debug(item.GetSection() + " => " + key.trim() + " => " + item.GetList().get(key.trim()));
                             }
                         }
                     }
                     br.close();
                     isr.close();
                     fis.close();
-
                     logger.Info("Configuration has been updated!");
                 } catch (IOException e) {
                     logger.Exception(e);

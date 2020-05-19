@@ -1,5 +1,6 @@
 package org.grandeur;
 
+import org.grandeur.configuration.Ini;
 import org.grandeur.logging.Context;
 import org.grandeur.logging.DC;
 import org.grandeur.logging.LogConfiguration;
@@ -7,6 +8,7 @@ import org.grandeur.logging.LogManager;
 import org.grandeur.logging.interfaces.Logger;
 import org.grandeur.utils.Environment;
 
+import java.io.IOException;
 import java.util.HashMap;
 /**
  *     Grandeur - a tool for logging, create config file based on ini and
@@ -39,7 +41,8 @@ public enum Grandeur {
     }
 
     private static Logger logger = LogManager.GetLogger("test");
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+        Ini ini = Environment.GetConfiguration();
         try(Context parent = DC.Push("entry")) {
             parent.Put("firstname", "harfiyan");
             parent.Put("lastname", "shia");
@@ -60,7 +63,7 @@ public enum Grandeur {
     }
 
     public void SubmitLock(GrandeurLockBase lock) {
-        if (!grandeurLockData.containsKey(lock.GetName()))
+        if (!LockExists(lock))
             grandeurLockData.put(lock.GetName(), lock);
     }
 

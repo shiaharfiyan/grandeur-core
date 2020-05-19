@@ -1,13 +1,17 @@
 package org.grandeur;
 
+import org.grandeur.configuration.Ini;
+import org.grandeur.configuration.IniManager;
 import org.grandeur.logging.LogConfiguration;
 import org.grandeur.logging.LogContext;
 import org.grandeur.logging.LogManager;
 import org.grandeur.logging.interfaces.LogAppender;
 import org.grandeur.logging.interfaces.Logger;
 import org.grandeur.utils.Environment;
+import org.grandeur.utils.Procedure;
 
 import java.io.File;
+
 /**
  *     Grandeur - a tool for logging, create config file based on ini and
  *     utils
@@ -50,7 +54,6 @@ class GrandeurLock extends GrandeurLockBase {
         }
 
         LogManager.Clean();
-
         long currentLastModified = LogConfiguration.Instance.GetLastModified();
         File file = new File(LogConfiguration.Instance.GetFullPath());
         if (currentLastModified != file.lastModified()) {
@@ -58,6 +61,7 @@ class GrandeurLock extends GrandeurLockBase {
             LogConfiguration.Instance.Load();
             threadLogger.Debug("Log Configuration file has been touch! " + LogConfiguration.Instance.GetFullPath());
         }
+        IniManager.Instance.Notify();
     }
 
     @Override

@@ -8,6 +8,7 @@ import org.grandeur.logging.appenders.FileLogAppender;
 import org.grandeur.logging.interfaces.LogAppender;
 import org.grandeur.logging.interfaces.Logger;
 import org.grandeur.utils.Environment;
+import org.grandeur.utils.Procedure;
 import org.grandeur.utils.helpers.ArrayHelper;
 
 import java.io.File;
@@ -52,7 +53,6 @@ public enum LogConfiguration implements FileSystem {
                 Load(logger);
             }
         }
-        System.out.println("Log Configuration has been loaded for all logger!");
     }
 
     public void SetLastModified(long value) {
@@ -84,15 +84,17 @@ public enum LogConfiguration implements FileSystem {
             for (int i = 0; i < loggerList.size(); i++) {
                 String jsonBindTo = loggerList.get(i).getAsJsonObject().get("bindTo").getAsString();
 
-                JsonArray filters = loggerList.get(i).getAsJsonObject().get("filters").getAsJsonArray();
                 List<LogFilter> logFilterList = new ArrayList<>();
-                for (int j = 0; j < filters.size() ; j++) {
-                    JsonObject filter = filters.get(j).getAsJsonObject();
-                    LogFilter logFilter = new LogFilter();
-                    logFilter.SetMethod(Method.FindWithDefault(filter.get("method").getAsString(), Method.Contains));
-                    logFilter.SetArea(Area.FindWithDefault(filter.get("area").getAsString(), Area.Value));
-                    logFilter.SetFilter(filter.get("filter").getAsString());
-                    logFilterList.add(logFilter);
+                if (loggerList.get(i).getAsJsonObject().has("filters")) {
+                    JsonArray filters = loggerList.get(i).getAsJsonObject().get("filters").getAsJsonArray();
+                    for (int j = 0; j < filters.size() ; j++) {
+                        JsonObject filter = filters.get(j).getAsJsonObject();
+                        LogFilter logFilter = new LogFilter();
+                        logFilter.SetMethod(Method.FindWithDefault(filter.get("method").getAsString(), Method.Contains));
+                        logFilter.SetArea(Area.FindWithDefault(filter.get("area").getAsString(), Area.Value));
+                        logFilter.SetFilter(filter.get("filter").getAsString());
+                        logFilterList.add(logFilter);
+                    }
                 }
 
                 if (jsonBindTo.equals("*")) {
@@ -189,7 +191,7 @@ public enum LogConfiguration implements FileSystem {
     @Override
     public void SetPath(String path) {
         this.path = path;
-        UpdateLastModified();
+        SetLastModified();
     }
 
     @Override
@@ -200,7 +202,7 @@ public enum LogConfiguration implements FileSystem {
     @Override
     public void SetFileName(String fileName) {
         this.fileName = fileName;
-        UpdateLastModified();
+        SetLastModified();
     }
 
     @Override
@@ -209,10 +211,22 @@ public enum LogConfiguration implements FileSystem {
         return ((this.path != null) && (this.path.endsWith(pathSeparator)) ? this.path + this.fileName : this.path + pathSeparator + this.fileName);
     }
 
-    private void UpdateLastModified() {
+    private void SetLastModified() {
         File file = new File(GetFullPath());
         if (file.exists() && !file.isDirectory()) {
             this.SetLastModified(file.lastModified());
         }
+    }
+
+    public void Notify(Procedure preRun, Procedure updatedOccurredRun, Procedure postRun) {
+        preRun.Run();
+        long currentLastModified = GetLastModified();
+        File file = new File(GetFullPath());
+        if (currentLastModified != file.lastModified()) {
+            SetLastModified(file.lastModified());
+            Load();
+            updatedOccurredRun.Run();
+        }
+        postRun.Run();
     }
 }
