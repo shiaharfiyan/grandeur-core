@@ -23,12 +23,22 @@ import org.grandeur.utils.helpers.ObjectHelper;
  *     along with this program. If not, see http://www.gnu.org/licenses/.
  */
 public enum Area {
-    Value,
-    Thread,
-    Context,
-    Date,
-    LoggerName,
-    Level;
+    Value(0),
+    Thread(1),
+    Context(2),
+    Date(3),
+    LoggerName(4),
+    Level(5);
+
+    private int value;
+
+    Area(int value) {
+        this.value = value;
+    }
+
+    public int GetValue() {
+        return value;
+    }
 
     public static Area Find(String name) {
         for (Area l : Area.values()) {

@@ -153,22 +153,34 @@ public class LogPattern {
 
     private boolean FindFilter(String source, Area area) {
         for(LogFilter logFilter : logFilterList.values()) {
-            if (logFilter.GetArea() == area) {
-                switch (logFilter.GetMethod()) {
-                    case Contains:
-                        return source.contains(logFilter.GetFilter());
-                    case Equals:
-                        return source.equals(logFilter.GetFilter());
-                    case StartWith:
-                        return source.startsWith(logFilter.GetFilter());
-                    case NotContains:
-                        return !source.contains(logFilter.GetFilter());
-                    case EndWith:
-                        return !source.endsWith(logFilter.GetFilter());
-                    case Regex:
+            if (logFilter.GetArea().GetValue() == area.GetValue()) {
+                switch (logFilter.GetMethod().GetValue()) {
+                    case Method.ContainsValue:
+                        return logFilter.IsIgnoreCase() ?
+                                source.toLowerCase().contains(logFilter.GetFilter().toLowerCase()) :
+                                source.contains(logFilter.GetFilter());
+                    case Method.EqualsValue:
+                        return logFilter.IsIgnoreCase() ?
+                                source.toLowerCase().equals(logFilter.GetFilter().toLowerCase()) :
+                                source.equals(logFilter.GetFilter());
+                    case Method.StartWithValue:
+                        return logFilter.IsIgnoreCase() ?
+                                source.toLowerCase().startsWith(logFilter.GetFilter().toLowerCase()) :
+                                source.startsWith(logFilter.GetFilter());
+                    case Method.NotContainsValue:
+                        return logFilter.IsIgnoreCase() ?
+                                !source.toLowerCase().contains(logFilter.GetFilter().toLowerCase()) :
+                                !source.contains(logFilter.GetFilter());
+                    case Method.EndWithValue:
+                        return logFilter.IsIgnoreCase() ?
+                                !source.toLowerCase().endsWith(logFilter.GetFilter().toLowerCase()) :
+                                !source.endsWith(logFilter.GetFilter());
+                    case Method.RegexValue:
                         try {
-                            return Pattern.matches(logFilter.GetFilter(), source);
-                        } catch(Exception e) {
+                            return logFilter.IsIgnoreCase() ?
+                                    Pattern.matches(logFilter.GetFilter().toLowerCase(), source.toLowerCase()) :
+                                    Pattern.matches(logFilter.GetFilter(), source);
+                        } catch (Exception e) {
                             System.out.println("Error while parsing regex: " + e.getMessage());
                             e.printStackTrace();
                         }

@@ -42,7 +42,7 @@
         <connection>scm:git:git://github.com/shiaharfiyan/grandeur-core.git</connection>
         <developerConnection>scm:git:git@github.com/shiaharfiyan/grandeur-core.git</developerConnection>
         <url>https://github.com/shiaharfiyan/grandeur-core</url>
-        <tag>grandeur-core-0.0.1</tag>
+        <tag>grandeur-core-0.1.2</tag>
     </scm>
     <distributionManagement>
         <snapshotRepository>

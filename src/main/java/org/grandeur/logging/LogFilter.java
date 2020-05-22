@@ -23,6 +23,7 @@ package org.grandeur.logging;
 public class LogFilter {
     private Method method;
     private String filter;
+    private boolean ignoreCase;
     private Area area;
 
     public Method GetMethod() {
@@ -47,5 +48,13 @@ public class LogFilter {
 
     public void SetArea(Area area) {
         this.area = area;
+    }
+
+    public boolean IsIgnoreCase() {
+        return ignoreCase;
+    }
+
+    public void SetIgnoreCase(boolean ignoreCase) {
+        this.ignoreCase = ignoreCase;
     }
 }

@@ -22,13 +22,30 @@ import org.grandeur.utils.helpers.ObjectHelper;
  *     You should have received a copy of the GNU General Public License
  *     along with this program. If not, see http://www.gnu.org/licenses/.
  */
-    public enum Method {
-        StartWith,
-        EndWith,
-        Contains,
-        Equals,
-        NotContains,
-        Regex;
+public enum Method {
+    StartWith(0),
+    EndWith(1),
+    Contains(2),
+    Equals(3),
+    NotContains(4),
+    Regex(5);
+
+    public static final int StartWithValue = 0;
+    public static final int EndWithValue = 1;
+    public static final int ContainsValue = 2;
+    public static final int EqualsValue = 3;
+    public static final int NotContainsValue = 4;
+    public static final int RegexValue = 5;
+
+    private int value;
+
+    Method(int value) {
+        this.value = value;
+    }
+
+    public int GetValue() {
+        return value;
+    }
 
     public static Method Find(String name) {
         for (Method l : Method.values()) {

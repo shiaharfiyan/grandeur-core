@@ -8,6 +8,12 @@ Gandeur LogTrace is a simple logging library with nested diagnostic context and 
 
 ```text
     Version 0.1.0
+        - Adding filters to logger, print specific log which contains filter
+
+    Version 0.1.0
+    - Adding filters to logger, print specific log which contains filter
+    
+    Version 0.1.0
     - Adding filters to logger, print specific log which contains filter
 
     Version 0.0.9
@@ -165,6 +171,7 @@ By default, this config file will be created during runtime if there's no any .j
 |         method | String | how to apply the filter. possible value: StartWith, EndWith, Contains, Equals, NotContains, Regex |
 |         area | String | area of filter will be applied. possible value: Value, Thread, Context, Date, LoggerName, Level; |
 |         filter | String | Acceptable type "com.rhapsody.logging.appenders.FileLogAppender" and "com.rhapsody.logging.appenders.ConsoleLogAppender" or any class extends LogAppender interface |
+|         ignoreCase | boolean | Ignore case for comparing filter to log, lower case everything |
 |     appenderList | Array of Object |  |
 |         fileName | String | Name of log, automatically append extension ".log", only   available for "com.rhapsody.logging.appenders.FileLogAppender" |
 |         path | String | Path of Log, automatically   create folder, failed if drive not exists |
@@ -204,7 +211,7 @@ Add the following to your pom.xml
 <dependency>
     <groupId>io.github.shiaharfiyan</groupId>
     <artifactId>grandeur-core</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.2</version>
 </dependency>
 ```
 ### Third-Party Library

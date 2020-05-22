@@ -79,26 +79,28 @@ public enum LogConfiguration implements FileSystem {
                 globalPattern = je.getAsJsonObject().get("globalPattern").getAsString();
             }
 
-            boolean bindToAll = false;
+            boolean bindToAll;
             long timeMilli = Instant.now().toEpochMilli();
             for (int i = 0; i < loggerList.size(); i++) {
+                bindToAll = false;
                 String jsonBindTo = loggerList.get(i).getAsJsonObject().get("bindTo").getAsString();
+
+                if (jsonBindTo.equals("*")) {
+                    bindToAll = true;
+                }
 
                 List<LogFilter> logFilterList = new ArrayList<>();
                 if (loggerList.get(i).getAsJsonObject().has("filters")) {
                     JsonArray filters = loggerList.get(i).getAsJsonObject().get("filters").getAsJsonArray();
-                    for (int j = 0; j < filters.size() ; j++) {
+                    for (int j = 0; j < filters.size(); j++) {
                         JsonObject filter = filters.get(j).getAsJsonObject();
                         LogFilter logFilter = new LogFilter();
                         logFilter.SetMethod(Method.FindWithDefault(filter.get("method").getAsString(), Method.Contains));
                         logFilter.SetArea(Area.FindWithDefault(filter.get("area").getAsString(), Area.Value));
                         logFilter.SetFilter(filter.get("filter").getAsString());
+                        logFilter.SetIgnoreCase(filter.get("ignoreCase").getAsBoolean());
                         logFilterList.add(logFilter);
                     }
-                }
-
-                if (jsonBindTo.equals("*")) {
-                    bindToAll = true;
                 }
 
                 JsonArray appenderList = loggerList.get(i).getAsJsonObject().getAsJsonArray("appenderList");
@@ -147,7 +149,6 @@ public enum LogConfiguration implements FileSystem {
             }
 
             appenderObject.SetLogPattern(new LogPattern(jsonAppenderPattern, logFilters));
-
             if (appenderObject instanceof FileLogAppender) {
                 String jsonPath = Environment.Replace(appender.get("path").getAsString());
                 String jsonFileName = Environment.Replace(appender.get("fileName").getAsString());
@@ -160,8 +161,8 @@ public enum LogConfiguration implements FileSystem {
                 BigInteger jsonSizeLimit = keeper.get("sizeLimit").getAsBigInteger();
                 int jsonFileCountToKeep = keeper.get("fileToKeep").getAsInt();
 
-                JsonNull jsonPrefix = keeper.get("prefix").getAsJsonNull();
-                JsonNull jsonSuffix = keeper.get("suffix").getAsJsonNull();
+                String jsonPrefix = keeper.get("prefix").getAsString();
+                String jsonSuffix = keeper.get("suffix").getAsString();
 
                 FileLogAppender fileLogAppender = (FileLogAppender) appenderObject;
                 fileLogAppender.SetFileName(jsonFileName);
@@ -171,14 +172,15 @@ public enum LogConfiguration implements FileSystem {
                 fileLogAppender.GetKeeper().SetEnable(jsonKeeper);
                 fileLogAppender.GetKeeper().SetFileCountToKeep(jsonFileCountToKeep);
                 fileLogAppender.GetKeeper().SetSizeLimit(jsonSizeLimit);
-                fileLogAppender.GetKeeper().SetPrefix(jsonPrefix.isJsonPrimitive() ? jsonPrefix.getAsString() : null);
-                fileLogAppender.GetKeeper().SetSuffix(jsonSuffix.isJsonPrimitive() ? jsonSuffix.getAsString() : null);
+                fileLogAppender.GetKeeper().SetPrefix(jsonPrefix);
+                fileLogAppender.GetKeeper().SetSuffix(jsonSuffix);
                 fileLogAppender.GetKeeper().SetNeedToMove(jsonMoveFile);
                 fileLogAppender.GetKeeper().SetAutoCreateArchivedDirectory(jsonAutoCreate);
             }
 
             loggerToBind.UpdateAppender(appenderObject, timeMilli);
         }
+
 
         loggerToBind.RemoveAppender(timeMilli);
     }
