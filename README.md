@@ -7,11 +7,11 @@ Gandeur LogTrace is a simple logging library with nested diagnostic context and 
 ### Changes log
 
 ```text
-    Version 0.1.0
-        - Adding filters to logger, print specific log which contains filter
+    Version 0.1.2
+    - Bug fix for logFilter
 
-    Version 0.1.0
-    - Adding filters to logger, print specific log which contains filter
+    Version 0.1.1
+    - Update ini manager
     
     Version 0.1.0
     - Adding filters to logger, print specific log which contains filter
