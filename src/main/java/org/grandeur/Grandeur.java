@@ -1,5 +1,6 @@
 package org.grandeur;
 
+import org.grandeur.configuration.Ini;
 import org.grandeur.logging.Context;
 import org.grandeur.logging.DC;
 import org.grandeur.logging.LogConfiguration;
@@ -39,13 +40,13 @@ public enum Grandeur {
         LogConfiguration.Instance.SetFileName(Grandeur.class.getSimpleName() + ".json");
     }
 
+    private static Logger logger = LogManager.GetLogger("test");
     public static void main(String[] args) throws IOException {
-        Logger logger = LogManager.GetLogger(Grandeur.class);
-        Logger logger2 = LogManager.GetLogger(GrandeurLock.class);
+        Ini ini = Environment.GetConfiguration();
         try (Context parent = DC.Push("entry")) {
             parent.Put("firstname", "harfiyan");
             parent.Put("lastname", "shia");
-            logger2.Info("Hello, its grandeur logtrace!");
+            logger.Info("Hello, its grandeur logtrace!");
             try (Context child = DC.Push("update")) {
                 child.Put("firstname", "xxxx");
                 logger.Info("Has been updated");
