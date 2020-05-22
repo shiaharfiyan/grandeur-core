@@ -7,7 +7,8 @@
         {
           "method": "Regex",
           "area": "Value",
-          "filter": ".*"
+          "filter": ".*",
+          "ignoreCase": true
         }
       ],
       "appenderList": [
@@ -24,8 +25,8 @@
             "enabled": true,
             "sizeLimit": 104857600,
             "fileToKeep": 20,
-            "prefix": null,
-            "suffix": null,
+            "prefix": "",
+            "suffix": "",
             "autoMove": true,
             "autoCreateArchiveFolder": true
           }
