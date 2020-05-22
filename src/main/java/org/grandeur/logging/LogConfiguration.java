@@ -161,8 +161,8 @@ public enum LogConfiguration implements FileSystem {
                 BigInteger jsonSizeLimit = keeper.get("sizeLimit").getAsBigInteger();
                 int jsonFileCountToKeep = keeper.get("fileToKeep").getAsInt();
 
-                String jsonPrefix = keeper.get("prefix").getAsString();
-                String jsonSuffix = keeper.get("suffix").getAsString();
+                String jsonPrefix = keeper.get("prefix").isJsonNull() ? "" : keeper.get("prefix").getAsString();
+                String jsonSuffix = keeper.get("suffix").isJsonNull() ? "" : keeper.get("suffix").getAsString();
 
                 FileLogAppender fileLogAppender = (FileLogAppender) appenderObject;
                 fileLogAppender.SetFileName(jsonFileName);
